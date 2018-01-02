@@ -1,0 +1,14 @@
+{
+  "name": "dadbot",
+  "version": "0.0.1",
+  "description": "A bot to replace you'r long lost dad",
+  "main": "index.js",
+  "scripts": {
+    "test": "tst"
+  },
+  "author": "CEbbinghaus",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.2.1"
+  }
+}
