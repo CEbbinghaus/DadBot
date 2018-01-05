@@ -3,8 +3,13 @@ const b = new d.Client()
 var a = new Map();
 b.on('message', m => {
     if(m.author.bot)return;
-    if(m.author.id == m.guild.owner.id){
-        if(m.isMentioned(b.user)){
+    if(m.isMentioned(b.user)){
+        if(m.author.id == YourIDHere){
+            if(/Exit/ig.test(m)){
+                process.exit(0)
+            }
+        }
+        if(m.author.id == m.guild.owner.id){
             if(/stahp/ig.test(m)){
                 a.set(m.guild.id, false);
                 m.reply("ok i will stop");
@@ -26,4 +31,4 @@ b.on('guildCreate', g => {
     })
     a.set(g.id, true);
 })
-b.login("YourTokenhere");
+b.login("YourTokenHere");
