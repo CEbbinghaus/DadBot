@@ -1,15 +1,18 @@
 const d = require("discord.js");
+const mysql = require("mysql");
+const s = require("./settings.json")
 const b = new d.Client()
 var a = new Map();
+b.on('ready', () =>{console.log("running");})
 b.on('message', m => {
     if(m.author.bot)return;
     if(m.isMentioned(b.user)){
-        if(m.author.id == YourIDHere){
+        if(m.author.id == s.id){
             if(/Exit/ig.test(m)){
                 process.exit(0)
             }
         }
-        if(m.author.id == m.guild.owner.id){
+        if(m.author.id == m.guild.owner.id || m.author.id == s.id){
             if(/stahp/ig.test(m)){
                 a.set(m.guild.id, false);
                 m.reply("ok i will stop");
@@ -19,7 +22,7 @@ b.on('message', m => {
             }
         }
     }
-    if(a.get(m.guild.id)){
+    if(typeof a.get(m.guild.id) != 'bool' || a.get(m.guild.id)){
         let k = /\b(im|i'm) (.+)/ig.exec(m);
         if(!k)return;
         m.channel.send(`Hello ${k[2]} i'm Dad`);
@@ -31,4 +34,5 @@ b.on('guildCreate', g => {
     })
     a.set(g.id, true);
 })
-b.login("YourTokenHere");
+
+b.login(s.token)
