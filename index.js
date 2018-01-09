@@ -12,7 +12,7 @@ b.on('message', m => {
             }
         }
         if(m.author.id == m.guild.owner.id || m.author.id == s.id){
-            if(/(stahp) | (stop)/ig.test(m)){
+            if(/stop/ig.test(m)){
                 a.set(m.guild.id, false);
                 m.reply("ok i will stop");
             }else if(/start/ig.test(m)){
