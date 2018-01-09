@@ -1,5 +1,4 @@
 const d = require("discord.js");
-const mysql = require("mysql");
 const s = require("./settings.json")
 const b = new d.Client()
 var a = new Map();
