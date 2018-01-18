@@ -2,7 +2,7 @@
   "name": "dadbot",
   "version": "0.0.1",
   "description": "A bot to replace you'r long lost dad",
-  "main": "index.js",
+  "main": "start.js",
   "scripts": {
     "test": "tst"
   },
