@@ -16,10 +16,9 @@ b.on('message', m => {
         if(m.author.id == s.id){
             if(/Exit/ig.test(m)){
                 m.reply("now exiting");
-                process.exit(0)
                 child.exec("pm2 stop DadBot", (e, out, err) => {
                     console.log(e, out, err);
-                })
+                }).addListener("exit", () => process.exit(0))
             }
         }
         if(m.author.id == m.guild.owner.id || m.author.id == s.id){
