@@ -1,14 +1,25 @@
 const d = require("discord.js");
+const child = require("child_process");
 const s = require("./settings.json")
+const p = require("./package.json")
 const b = new d.Client()
 var a = new Map();
-b.on('ready', () =>{console.log("running");b.guilds.forEach(g => {a.set(g.id, true)})})
+b.on('ready', () =>{
+    let m = 0;
+    b.guilds.forEach(g => m += g.memberCount)
+    console.log(`${p.name} is online on ${b.guilds.size} servers for a total of ${m} members`)
+    b.guilds.forEach(g => {a.set(g.id, true)})
+})
 b.on('message', m => {
     if(m.author.bot)return;
     if(m.isMentioned(b.user)){
         if(m.author.id == s.id){
             if(/Exit/ig.test(m)){
+                m.reply("now exiting");
                 process.exit(0)
+                child.exec("pm2 stop DadBot", (e, out, err) => {
+                    console.log(e, out, err);
+                })
             }
         }
         if(m.author.id == m.guild.owner.id || m.author.id == s.id){
