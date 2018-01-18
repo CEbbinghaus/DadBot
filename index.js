@@ -5,6 +5,10 @@ const p = require("./package.json")
 const b = new d.Client()
 var a = new Map();
 b.on('ready', () =>{
+    child.exec("pm2 start . --name='DadBot'", (e, out, err) => {
+        console.log("started DadBot with pm2", out, err);
+        process.exit(0)
+    })
     let m = 0;
     b.guilds.forEach(g => m += g.memberCount)
     console.log(`${p.name} is online on ${b.guilds.size} servers for a total of ${m} members`)
