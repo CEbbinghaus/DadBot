@@ -1,5 +1,5 @@
 const c = require("child_process");
-c.exec("pm2 start index.js --name='DadBot'", (e, out, err) => {
+c.exec("pm2 start index.js --name='DadBot' --watch", (e, out, err) => {
     process.exit(0)
     console.log("started DadBot with pm2", out, err);
 })
