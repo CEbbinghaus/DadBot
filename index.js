@@ -1,47 +1,104 @@
-const d = require("discord.js");
-const child = require("child_process");
-const s = require("./settings.json")
-const p = require("./package.json")
-const b = new d.Client()
-var a = new Map();
-b.on('ready', () =>{
-    let m = 0;
-    b.guilds.forEach(g => m += g.memberCount)
-    console.log(`${p.name} is online on ${b.guilds.size} servers for a total of ${m} members`)
-    b.guilds.forEach(g => {a.set(g.id, true)})
-})
-b.on('message', m => {
-    if(m.author.bot)return;
-    if(m.isMentioned(b.user)){
-        if(m.author.id == s.id){
-            if(/Exit/ig.test(m)){
-                m.reply("now exiting");
-                child.exec("pm2 delete DadBot", (e, out, err) => {
-                    console.log(e, out, err);
-                }).addListener("exit", () => process.exit(0))
-            }
-        }
-        if(m.author.id == m.guild.owner.id || m.author.id == s.id){
-            if(/stop/ig.test(m)){
-                a.set(m.guild.id, false);
-                m.reply("ok i will stop");
-            }else if(/start/ig.test(m)){
-                a.set(m.guild.id, true);
-                m.reply("Gonna Wreck this server");
-            }
-        }
-    }
-    if(a.get(m.guild.id)){
-        let k = /\b(im|i'm) (.+)/ig.exec(m);
-        if(!k)return;
-        m.channel.send(`Hello ${k[2]} i'm Dad`);
-    }
-})
-b.on('guildCreate', g => {
-    g.owner.createDM().then(d => {
-        d.send("heya im Dadbot i will do stupid shit. if you want me to stop just send **@DadBot stop**, and you want me to resume my shenanigans then use **start** instead of stop");
-    })
-    a.set(g.id, true);
+const Discord = require("discord.js");
+const Child = require("child_process");
+
+//Importing Settings Such as Dev ID and Token
+const Settings = require("./settings.json");
+//Importing Bot Name
+const Package = require("./package.json");
+const Bot = new Discord.Client();
+const Snek = require("snekfetch");
+
+//This is so that server owners can toggle the bot off without having to kick him
+var ServerMap = new Map();
+
+//Triggers when the bot is logged in
+Bot.on('ready', () =>{
+    let Members = 0;
+    //Adding onto the Member Count
+    Bot.guilds.forEach(g => Members += g.memberCount);
+    //Loggint amount of servers and members
+    console.log(`${Package.name} is online on ${Bot.guilds.size} servers for ServerMap total of ${Members} members`);
+    //setting all server id's to true so the bot is enabled by default
+    Bot.guilds.forEach(g => {ServerMap.set(g.id, true)});
 })
 
-b.login(s.token)
+//Triggers when the Bot recives a message
+Bot.on('message', Message => {
+    //Checking if the Message was sent By a Bot
+    if(Message.author.bot)return;
+
+    //Checking if the message is in a dm to the bot. if so then it simply gives you its invite link
+    if(Message.channel.type == "dm"){
+        Message.channel.send(`Here is my Invite Code: https://discordapp.com/oauth2/authorize?client_id=397646331415494694&scope=bot&permissions=314432`);
+    }
+
+    //makes sure that the bot is mentioned
+    if(Message.isMentioned(Bot.user)){
+
+        //checks if the word dadjoke appears somewhere in the message
+        if(/dadjoke/ig.test(Message)){
+            //if so then it fetches a random dadjoke off of reddit and sends it into the chat
+            Snek.get("https://www.reddit.com/r/dadjokes.json?limit=1000")
+            .then(res => {
+                const f= JSON.parse(res.text)
+                 let url = f.data.children[Math.ceil(Math.random() * f.data.children.length - 1)].data;
+                 let joke = new Discord.RichEmbed()
+                 .setTitle("DadJoke:")
+                 .setColor("960ddb")
+                 .addField(url.title, url.selftext.toString());
+                 Message.channel.send(joke);
+             })
+        }
+
+        //checks if the message was sent By the Dev
+        if(Message.author.id == Settings.id){
+            //allows for the dev to remotely shut off the bot
+            if(/Exit/ig.test(Message)){
+                Child.exec("pm2 delete DadBot", (e, out, err) => {
+                    Message.reply("now exiting  " + out);
+                })
+            }
+        }
+        //checks if the messge was sent by the server owner or Bot Dev
+        if(Message.author.id == Message.guild.owner.id || Message.author.id == Settings.id){
+            //Stops the bot from Sending Messages By setting the server id to false in the ServerMap we created
+            if(/stop/ig.test(Message)){
+                ServerMap.set(Message.guild.id, false);
+                Message.reply("ok i will stop");
+            }
+            else
+            //Sets the server ID to true so the bot continues spamming chat
+            if(/start/ig.test(Message)){
+                ServerMap.set(Message.guild.id, true);
+                Message.reply("Gonna Wreck this server");
+            }
+        }
+    }
+
+    //checks if the server has the bot enabled
+    if(ServerMap.get(Message.guild.id)){
+
+        //if so then it checks if the message has im [Something] in it
+        let k = /\Bot(im|i'Message) (.+)/ig.exec(Message);
+        if(!k)return;
+
+        //if so then it sends a reply
+        Message.channel.send(`Hello ${k[2]} i'Message Dad`);
+    }
+})
+
+//Triggers when the bot gets invited to a new Server
+Bot.on('guildCreate', g => {
+    //Sends the Owner a Dm telling him how to stop the Bot
+    g.owner.createDM().then(Discord => {
+        Discord.send("heya im Dadbot i will do stupid shit. if you want me to stop just send **@DadBot stop**, and you want me to resume my shenanigans then use **start** instead of stop");
+    });
+    //Sets the ServerID to true so the bot is enabled
+    ServerMap.set(g.id, true);
+})
+
+//Watches out for unhandled rejections and loggs them
+process.on("unhandledRejection", console.error);
+
+//Loggs the bot into discord
+Bot.login(Settings.token);
