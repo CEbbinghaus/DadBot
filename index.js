@@ -36,7 +36,7 @@ Bot.on('message', Message => {
     if(Message.isMentioned(Bot.user)){
 
         //checks if the word dadjoke appears somewhere in the message
-        if(/dadjoke/ig.test(Message)){
+        if(/(dad(\s+|)joke)/ig.test(Message)){
             //if so then it fetches a random dadjoke off of reddit and sends it into the chat
             Snek.get("https://www.reddit.com/r/dadjokes.json?limit=1000")
             .then(res => {
@@ -53,7 +53,7 @@ Bot.on('message', Message => {
         //checks if the message was sent By the Dev
         if(Message.author.id == Settings.id){
             //allows for the dev to remotely shut off the bot
-            if(/Exit/ig.test(Message)){
+            if(/exit/ig.test(Message)){
                 Child.exec("pm2 delete DadBot", (e, out, err) => {
                     Message.reply("now exiting  " + out);
                 })
