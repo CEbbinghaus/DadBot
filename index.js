@@ -79,11 +79,11 @@ Bot.on('message', Message => {
     if(ServerMap.get(Message.guild.id)){
 
         //if so then it checks if the message has im [Something] in it
-        let k = /\Bot(im|i'Message) (.+)/ig.exec(Message);
+        let k = /\b(im|i'm)\s(.+)/ig.exec(Message.content);
         if(!k)return;
 
         //if so then it sends a reply
-        Message.channel.send(`Hello ${k[2]} i'Message Dad`);
+        Message.channel.send(`Hello ${k[2]} i'm Dad`);
     }
 })
 
