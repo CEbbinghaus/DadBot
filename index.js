@@ -22,6 +22,7 @@ Bot.on('ready', () =>{
     Bot.guilds.forEach(g => {ServerMap.set(g.id, true)});
 })
 
+
 //Triggers when the Bot recives a message
 Bot.on('message', Message => {
     //Checking if the Message was sent By a Bot
@@ -48,6 +49,12 @@ Bot.on('message', Message => {
                  .addField(url.title, url.selftext.toString());
                  Message.channel.send(joke);
              })
+        }
+
+        if(/(kys|die|fuck\soff|kill\syour\self)/gi.test(Message)){
+            let reply = new Discord.RichEmbed()
+            .setImage("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png");
+            Message.channel.send(reply);
         }
 
         //checks if the message was sent By the Dev
@@ -99,6 +106,7 @@ Bot.on('guildCreate', g => {
 
 //Watches out for unhandled rejections and loggs them
 process.on("unhandledRejection", console.error);
+
 
 //Loggs the bot into discord
 Bot.login(Settings.token);
