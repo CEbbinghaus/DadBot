@@ -2,9 +2,9 @@
   "name": "dadbot",
   "version": "0.0.1",
   "description": "A bot to replace you'r long lost dad",
-  "main": "start.js",
+  "main": "index.js",
   "scripts": {
-    "test": "tst"
+    "run": "pm2 start index.js --name='DadBot' --watch"
   },
   "author": "CEbbinghaus",
   "license": "ISC",
