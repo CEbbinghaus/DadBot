@@ -51,6 +51,14 @@ Bot.on('message', Message => {
              })
         }
 
+        if(/proud/gi.test(Message)){
+            if(Math.round(Math.random()) == 0){
+                Message.reply("Im proud of you son :)");
+            }else{
+                Message.reply("You are a Dissapointment to your Mother and Me");
+            }
+        }
+
         if(/(kys|die|fuck\soff|kill\syour\self)/gi.test(Message)){
             let reply = new Discord.RichEmbed()
             .setImage("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png");
@@ -83,7 +91,7 @@ Bot.on('message', Message => {
     }
 
     //checks if the server has the bot enabled
-    if(ServerMap.get(Message.guild.id)){
+    if(Message.channel.type != "dm" && ServerMap.get(Message.guild.id)){
 
         //if so then it checks if the message has im [Something] in it
         let k = /\b(im|i'm)\s(.+)/ig.exec(Message.content);
