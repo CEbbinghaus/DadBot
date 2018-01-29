@@ -19,7 +19,7 @@ Bot.on('ready', () =>{
     //Loggint amount of servers and members
     console.log(`${Package.name} is online on ${Bot.guilds.size} servers for ServerMap total of ${Members} members`);
     //setting all server id's to true so the bot is enabled by default
-    Bot.guilds.forEach(g => {ServerMap.set(g.id, true)});
+    Bot.guilds.forEach(g => {ServerMap.set(g.id, true);console.log(g.id, g.name)});
 })
 
 
@@ -50,8 +50,20 @@ Bot.on('message', Message => {
                  Message.channel.send(joke);
              })
         }
+        else
+        if(/joke/ig.test(Message)){
+            //if so then it fetches a random dadjoke off of reddit and sends it into the chat
+            Snek.get("https://www.reddit.com/r/jokes.json?limit=1000")
+            .then(res => {
+                const f= JSON.parse(res.text)
+                 let url = f.data.children[Math.ceil(Math.random() * f.data.children.length - 1)].data;
+                 Message.channel.send(url.title + "\n\n" + url.selftext.toString());
+             })
+        }
 
+        //checks for the word proud in the message
         if(/proud/gi.test(Message)){
+            //if so it randomly sends one of two messages
             if(Math.round(Math.random()) == 0){
                 Message.reply("Im proud of you son :)");
             }else{
@@ -59,6 +71,18 @@ Bot.on('message', Message => {
             }
         }
 
+        //checks if the message contains daddy
+        if(/daddy/gi.test(Message)){
+            //if so reply
+            Message.reply("That's kinda hot");
+        }
+
+        //check if you are asking the bot to dab
+        if(/dab/gi.test(Message)){
+            Message.reply(Math.round(Math.random()) == 0 ? "https://s-media-cache-ak0.pinimg.com/originals/cc/f2/0e/ccf20e7aba60f7bcd7f2ba8838c65327.jpg" : "https://d2g8igdw686xgo.cloudfront.net/20131494_1493864445.1698.jpg")
+        }
+
+        //checks if you are asking the bot to die
         if(/(kys|die|fuck\soff|kill\syour\self)/gi.test(Message)){
             let reply = new Discord.RichEmbed()
             .setImage("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png");
