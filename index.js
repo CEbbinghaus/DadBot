@@ -17,9 +17,9 @@ Bot.on('ready', () =>{
     //Adding onto the Member Count
     Bot.guilds.forEach(g => Members += g.memberCount);
     //Loggint amount of servers and members
-    console.log(`${Package.name} is online on ${Bot.guilds.size} servers for ServerMap total of ${Members} members`);
+    console.log(`${Package.name} is online on ${Bot.guilds.size} servers for a total of ${Members} members`);
     //setting all server id's to true so the bot is enabled by default
-    Bot.guilds.forEach(g => {ServerMap.set(g.id, true);console.log(g.id, g.name)});
+    Bot.guilds.forEach(g => {ServerMap.set(g.id, {server: true, users: new Map()});console.log(g.id, g.name)});
 })
 
 
@@ -30,11 +30,61 @@ Bot.on('message', Message => {
 
     //Checking if the message is in a dm to the bot. if so then it simply gives you its invite link
     if(Message.channel.type == "dm"){
-        Message.channel.send(`Here is my Invite Code: https://discordapp.com/oauth2/authorize?client_id=397646331415494694&scope=bot&permissions=314432`);
+        return Message.channel.send(`Here is my Invite Code: https://discordapp.com/oauth2/authorize?client_id=397646331415494694&scope=bot&permissions=314432`);
     }
 
     //makes sure that the bot is mentioned
     if(Message.isMentioned(Bot.user)){
+
+        //checks if you are asking the bot for help
+        if(/help/ig.test(Message)){
+            let reply = `
+            Heya you asked for my help so let me give you a brief overview of what i can do.
+            i function using regex so you can just include my commands instead of calling them.
+            e.g
+            \`\`\`@dadbot give me a dad joke\`\`\` opposed to \`\`\`@dadbot dadjoke\`\`\`
+            so my abilities are:
+            **Help** sends you a message with all my abilities ***DUH***
+            **stop** will stop responding to you with hi [Inset message here], im dad
+            **start** will resume annoying you
+            **joke** will send a random joke from the /r/jokes subreddit
+            **dad joke** will send a random dad joke from the /r/dadjokes subreddit                             
+            **dab** will dab
+            **daddy** will fulfill any of your pleasures
+            **kys** *(or asking the bot to die in any way) will make him shut down
+            **proud** will tell you if he is proud of you or not.
+            `
+            Message.member.send(reply);
+            return Message.react(":white_check_mark:");
+        }
+
+
+        //checks if the messge was sent by the server owner or Bot Dev
+        if(Message.author.id == Message.guild.owner.id || Message.author.id == Settings.id){
+            //Stops the bot from Sending Messages By setting the server id to false in the ServerMap we created
+            if(/stop\sall/ig.test(Message)){
+                ServerMap.get(Message.guild.id).server = false;
+                return Message.react(":white_check_mark:");
+            }
+            else
+            //Sets the server ID to true so the bot continues spamming chat
+            if(/start\sall/ig.test(Message)){
+                ServerMap.get(Message.guild.id).server = true;
+                return Message.react(":white_check_mark:");
+            }
+        }
+
+        //checking if you are asking for the bot to stop
+        if(/stop/ig.test(Message)){
+            ServerMap.get(Message.guild.id).users.set(Message.id, false);
+            return Message.react(":white_check_mark:");
+        }
+
+        //checking if you are asking for the bot to resume
+        if(/start/ig.test(Message)){
+            ServerMap.get(Message.guild.id).users.set(Message.id, true);
+            return Message.react(":white_check_mark:");
+        }
 
         //checks if the word dadjoke appears somewhere in the message
         if(/(dad(\s+|)joke)/ig.test(Message)){
@@ -61,28 +111,30 @@ Bot.on('message', Message => {
              })
         }
 
+        if(/stop/ig.test)
+
         //checks for the word proud in the message
         if(/proud/gi.test(Message)){
             //if so it randomly sends one of two messages
             if(Math.round(Math.random()) == 0){
-                Message.reply("Im proud of you son :)");
+                return Message.reply("Im proud of you son :)");
             }else{
-                Message.reply("You are a Dissapointment to your Mother and Me");
+                return Message.reply("You are a Dissapointment to your Mother and Me");
             }
         }
 
         //checks if the message contains daddy
         if(/daddy/gi.test(Message)){
             //if so reply
-            Message.reply("That's kinda hot");
+            return Message.reply(Math.random().round() == 0 ? "That's kinda hot" : "please pease, you may only call me daddy behind closed doors.");
         }
 
         //check if you are asking the bot to dab
         if(/dab/gi.test(Message)){
-            Message.reply(Math.round(Math.random()) == 0 ? "https://s-media-cache-ak0.pinimg.com/originals/cc/f2/0e/ccf20e7aba60f7bcd7f2ba8838c65327.jpg" : "https://d2g8igdw686xgo.cloudfront.net/20131494_1493864445.1698.jpg")
+            return Message.reply(Math.round(Math.random()) == 0 ? "https://s-media-cache-ak0.pinimg.com/originals/cc/f2/0e/ccf20e7aba60f7bcd7f2ba8838c65327.jpg" : "https://d2g8igdw686xgo.cloudfront.net/20131494_1493864445.1698.jpg")
         }
 
-        //checks if you are asking the bot to die
+        //checks if you are asking the bot to die   
         if(/(kys|die|fuck\soff|kill\syour\self)/gi.test(Message)){
             let reply = new Discord.RichEmbed()
             .setImage("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png");
@@ -94,35 +146,24 @@ Bot.on('message', Message => {
             //allows for the dev to remotely shut off the bot
             if(/exit/ig.test(Message)){
                 Child.exec("pm2 delete DadBot", (e, out, err) => {
-                    Message.reply("now exiting  " + out);
+                    return Message.reply("now exiting  " + out);
                 })
-            }
-        }
-        //checks if the messge was sent by the server owner or Bot Dev
-        if(Message.author.id == Message.guild.owner.id || Message.author.id == Settings.id){
-            //Stops the bot from Sending Messages By setting the server id to false in the ServerMap we created
-            if(/stop/ig.test(Message)){
-                ServerMap.set(Message.guild.id, false);
-                Message.reply("ok i will stop");
-            }
-            else
-            //Sets the server ID to true so the bot continues spamming chat
-            if(/start/ig.test(Message)){
-                ServerMap.set(Message.guild.id, true);
-                Message.reply("Gonna Wreck this server");
             }
         }
     }
 
     //checks if the server has the bot enabled
-    if(Message.channel.type != "dm" && ServerMap.get(Message.guild.id)){
-
+    if(Message.channel.type != "dm" && ServerMap.get(Message.guild.id).server){
+        
         //if so then it checks if the message has im [Something] in it
         let k = /\b(im|i'm)\s(.+)/ig.exec(Message.content);
         if(!k)return;
 
-        //if so then it sends a reply
+        //makes sure the user and the server has the feature
+        if(!ServerMap.get(Message.guild.id).users.has(Message.author.id) || ServerMap.get(Message.guild.id).users.get(Message.author.id)){
+            //if so then it sends a reply
         Message.channel.send(`Hello ${k[2]} i'm Dad`);
+        }
     }
 })
 
@@ -130,10 +171,10 @@ Bot.on('message', Message => {
 Bot.on('guildCreate', g => {
     //Sends the Owner a Dm telling him how to stop the Bot
     g.owner.createDM().then(Discord => {
-        Discord.send("heya im Dadbot i will do stupid shit. if you want me to stop just send **@DadBot stop**, and you want me to resume my shenanigans then use **start** instead of stop");
+        Discord.send("heya im Dadbot i will do stupid shit. if you want me to stop just send **@DadBot stop all**, and you want me to resume my shenanigans then use **start** instead of stop");
     });
     //Sets the ServerID to true so the bot is enabled
-    ServerMap.set(g.id, true);
+    ServerMap.set(g.id, {server: true, users: new Map()});
 })
 
 //Watches out for unhandled rejections and loggs them
@@ -142,3 +183,7 @@ process.on("unhandledRejection", console.error);
 
 //Loggs the bot into discord
 Bot.login(Settings.token);
+
+Number.prototype.round = function(){
+    return Math.round(this)
+}
