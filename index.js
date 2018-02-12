@@ -19,7 +19,7 @@ Bot.on('ready', () =>{
     //Loggint amount of servers and members
     console.log(`${Package.name} is online on ${Bot.guilds.size} servers for a total of ${Members} members`);
     //setting all server id's to true so the bot is enabled by default
-    Bot.guilds.forEach(g => {ServerMap.set(g.id, {server: true, users: new Map()});console.log(g.id, g.name)});
+    Bot.guilds.forEach(g => {ServerMap.set(g.id, {server: true, users: new Map()});});
 })
 
 
@@ -48,42 +48,40 @@ Bot.on('message', Message => {
             **stop** will stop responding to you with hi [Inset message here], im dad
             **start** will resume annoying you
             **joke** will send a random joke from the /r/jokes subreddit
-            **dad joke** will send a random dad joke from the /r/dadjokes subreddit                             
+            **dad joke** will send a random dad joke from the /r/dadjokes subreddit
             **dab** will dab
             **daddy** will fulfill any of your pleasures
             **kys** *(or asking the bot to die in any way) will make him shut down
             **proud** will tell you if he is proud of you or not.
             `
             Message.member.send(reply);
-            return Message.react(":white_check_mark:");
+            return Message.react("✅");
         }
 
 
-        //checks if the messge was sent by the server owner or Bot Dev
-        if(Message.author.id == Message.guild.owner.id || Message.author.id == Settings.id){
-            //Stops the bot from Sending Messages By setting the server id to false in the ServerMap we created
-            if(/stop\sall/ig.test(Message)){
-                ServerMap.get(Message.guild.id).server = false;
-                return Message.react(":white_check_mark:");
-            }
-            else
-            //Sets the server ID to true so the bot continues spamming chat
-            if(/start\sall/ig.test(Message)){
-                ServerMap.get(Message.guild.id).server = true;
-                return Message.react(":white_check_mark:");
-            }
-        }
+		if(/stop\sall/ig.test(Message)){
+			if(Message.member.hasPermission("ADMINISTRATOR") || Message.author.id == Settings.id){
+				ServerMap.get(Message.guild.id).server = false;
+				return Message.react("✅");
+			}else{
+				return Message.react("❌");
+			}
+		}
+		else if(/stop/ig.test(Message)){//checking if you are asking for the bot to stop
+			ServerMap.get(Message.guild.id).users.set(Message.id, false);
+			return Message.react("✅");
+		}
 
-        //checking if you are asking for the bot to stop
-        if(/stop/ig.test(Message)){
-            ServerMap.get(Message.guild.id).users.set(Message.id, false);
-            return Message.react(":white_check_mark:");
-        }
-
-        //checking if you are asking for the bot to resume
-        if(/start/ig.test(Message)){
+		if(/start\sall/ig.test(Message)){
+			if(Message.member.hasPermission("ADMINISTRATOR") || Message.author.id == Settings.id){
+				ServerMap.get(Message.guild.id).server = true;
+				return Message.react("✅");
+			}else{
+				return Message.react("❌");
+			}
+		}else if(/start/ig.test(Message)){ //checking if you are asking for the bot to resume
             ServerMap.get(Message.guild.id).users.set(Message.id, true);
-            return Message.react(":white_check_mark:");
+            return Message.react("✅");
         }
 
         //checks if the word dadjoke appears somewhere in the message
@@ -134,7 +132,7 @@ Bot.on('message', Message => {
             return Message.reply(Math.round(Math.random()) == 0 ? "https://s-media-cache-ak0.pinimg.com/originals/cc/f2/0e/ccf20e7aba60f7bcd7f2ba8838c65327.jpg" : "https://d2g8igdw686xgo.cloudfront.net/20131494_1493864445.1698.jpg")
         }
 
-        //checks if you are asking the bot to die   
+        //checks if you are asking the bot to die
         if(/(kys|die|fuck\soff|kill\syour\self)/gi.test(Message)){
             let reply = new Discord.RichEmbed()
             .setImage("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png");
@@ -154,7 +152,7 @@ Bot.on('message', Message => {
 
     //checks if the server has the bot enabled
     if(Message.channel.type != "dm" && ServerMap.get(Message.guild.id).server){
-        
+
         //if so then it checks if the message has im [Something] in it
         let k = /\b(im|i'm)\s(.+)/ig.exec(Message.content);
         if(!k)return;
