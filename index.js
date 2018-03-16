@@ -51,9 +51,8 @@ Bot.on('message', Message => {
             **dad joke** will send a random dad joke from the /r/dadjokes subreddit
             **dab** will dab
             **daddy** will fulfill any of your pleasures
-            **kys** *(or asking the bot to die in any way) will make him shut down
             **proud** will tell you if he is proud of you or not.
-            `
+            `//**kys** *(or asking the bot to die in any way) will make him shut down
             Message.member.send(reply);
             return Message.react("✅");
         }
@@ -133,11 +132,11 @@ Bot.on('message', Message => {
         }
 
         //checks if you are asking the bot to die
-        if(/(kys|die|fuck\s+(off|you)|kill\s+your\s+self)/gi.test(Message)){
-            let reply = new Discord.RichEmbed()
-            .setImage("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png");
-            Message.channel.send(reply);
-        }
+        // if(/(kys|die|fuck\s+(off|you)|kill\s+your\s+self)/gi.test(Message)){
+        //     let reply = new Discord.RichEmbed()
+        //     .setImage("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png");
+        //     Message.channel.send(reply);
+        // }
 
         //checks if the message was sent By the Dev
         if(Message.author.id == Settings.id){
