@@ -37,6 +37,15 @@ Bot.on('message', Message => {
 
     //makes sure that the bot is mentioned
     if(Message.isMentioned(Bot.user)){
+        //checks if the message was sent By the Dev
+        if(Message.author.id == Settings.id){
+            //allows for the dev to remotely shut off the bot
+            if(/exit/ig.test(Message)){
+                Child.exec("pm2 delete DadBot", (e, out, err) => {
+                    return Message.reply("now exiting  " + out);
+                })
+            }
+        }
 
         //checks if you are asking the bot for help
         if(/help/ig.test(Message)){
@@ -111,7 +120,7 @@ Bot.on('message', Message => {
         }
 
         if(/(mom.*gay|gay.*mom)/){
-            return Message.reply("Ur sister a Mister!");
+            //return Message.reply("Ur sister a Mister!");
         }
 
         //checks for the word proud in the message
@@ -147,15 +156,6 @@ Bot.on('message', Message => {
             Message.channel.send(reply);
         }
 
-        //checks if the message was sent By the Dev
-        if(Message.author.id == Settings.id){
-            //allows for the dev to remotely shut off the bot
-            if(/exit/ig.test(Message)){
-                Child.exec("pm2 delete DadBot", (e, out, err) => {
-                    return Message.reply("now exiting  " + out);
-                })
-            }
-        }
     }
 
     //checks if the server has the bot enabled
