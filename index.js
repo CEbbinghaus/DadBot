@@ -11,6 +11,8 @@ const Snek = require("snekfetch");
 //This is so that server owners can toggle the bot off without having to kick him
 var ServerMap = new Map();
 
+const eightball = ["yes", "no", "maybe", "probably", "unlikely"];
+
 //Triggers when the bot is logged in
 Bot.on('ready', () =>{
     let Members = 0;
@@ -119,17 +121,22 @@ Bot.on('message', Message => {
                 return Message.reply("You are a Dissapointment to your Mother and Me");
             }
         }
-
+        
         //checks if the message contains daddy
         if(/daddy/gi.test(Message)){
             //if so reply
             return Message.reply(Math.random().round() == 0 ? "That's kinda hot" : "please pease, you may only call me daddy behind closed doors.");
         }
-
+        
         //check if you are asking the bot to dab
         if(/dab/gi.test(Message)){
             return Message.reply(Math.round(Math.random()) == 0 ? "https://s-media-cache-ak0.pinimg.com/originals/cc/f2/0e/ccf20e7aba60f7bcd7f2ba8838c65327.jpg" : "https://d2g8igdw686xgo.cloudfront.net/20131494_1493864445.1698.jpg")
         }
+        
+        if(/\?$/gi.test(Message)){
+            return Message.reply(eightball[Math.random() * eightball.length | 0]);
+        }
+
 
         //checks if you are asking the bot to die
         // if(/(kys|die|fuck\s+(off|you)|kill\s+your\s+self)/gi.test(Message)){
