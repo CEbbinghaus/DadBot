@@ -110,7 +110,9 @@ Bot.on('message', Message => {
              })
         }
 
-        if(/stop/ig.test)
+        if(/(mom.*gay|gay.*mom)/){
+            return Message.reply("Ur sister a Mister!");
+        }
 
         //checks for the word proud in the message
         if(/proud/gi.test(Message)){
@@ -139,11 +141,11 @@ Bot.on('message', Message => {
 
 
         //checks if you are asking the bot to die
-        // if(/(kys|die|fuck\s+(off|you)|kill\s+your\s+self)/gi.test(Message)){
-        //     let reply = new Discord.RichEmbed()
-        //     .setImage("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png");
-        //     Message.channel.send(reply);
-        // }
+        if(/(kys|die|fuck\s+(off|you)|kill\s+your\s+self)/gi.test(Message)){
+            let reply = new Discord.RichEmbed()
+            .setImage("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png");
+            Message.channel.send(reply);
+        }
 
         //checks if the message was sent By the Dev
         if(Message.author.id == Settings.id){
