@@ -120,7 +120,7 @@ Bot.on('message', Message => {
         }
 
         if(/(mom.*gay|gay.*mom)/gi.test(Message)){
-            //return Message.reply("Ur sister a Mister!");
+            return Message.reply("Ur sister a Mister!");
         }
 
         //checks for the word proud in the message
