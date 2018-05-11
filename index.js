@@ -159,7 +159,7 @@ Bot.on('message', Message => {
         //makes sure the user and the server has the feature
         if(!ServerMap.get(Message.guild.id).users.has(Message.author.id) || ServerMap.get(Message.guild.id).users.get(Message.author.id)){
             //if so then it sends a reply
-        Message.channel.send(`Hello ${k[2]} i'm Dad`);
+        Message.channel.send(`Hello ${k[2]}, i'm Dad!`);
         }
     }
 })
