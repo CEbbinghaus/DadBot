@@ -119,7 +119,7 @@ Bot.on('message', Message => {
              })
         }
 
-        if(/(mom.*gay|gay.*mom)/){
+        if(/(mom.*gay|gay.*mom)/gi.test(Message)){
             //return Message.reply("Ur sister a Mister!");
         }
 
