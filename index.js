@@ -141,7 +141,7 @@ Bot.on('message', Message => {
         
         //check if you are asking the bot to dab
         if(/dab/gi.test(Message)){
-            return Message.reply(Math.round(Math.random()) == 0 ? "https://s-media-cache-ak0.pinimg.com/originals/cc/f2/0e/ccf20e7aba60f7bcd7f2ba8838c65327.jpg" : "https://d2g8igdw686xgo.cloudfront.net/20131494_1493864445.1698.jpg")
+            return Message.reply(new Discord.Attachment(Math.round(Math.random()) == 0 ? "https://s-media-cache-ak0.pinimg.com/originals/cc/f2/0e/ccf20e7aba60f7bcd7f2ba8838c65327.jpg" : "https://d2g8igdw686xgo.cloudfront.net/20131494_1493864445.1698.jpg"));
         }
         
         if(/\?$/gi.test(Message)){
