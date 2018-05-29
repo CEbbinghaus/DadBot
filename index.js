@@ -8,6 +8,8 @@ const Package = require("./package.json");
 const Bot = new Discord.Client();
 const Snek = require("snekfetch");
 
+
+
 //This is so that server owners can toggle the bot off without having to kick him
 var ServerMap = new Map();
 
@@ -156,19 +158,19 @@ Bot.on('message', Message => {
 
     }
 
-    //checks if the server has the bot enabled
-    if(Message.channel.type != "dm" && ServerMap.get(Message.guild.id).server){
+    // //checks if the server has the bot enabled
+    // if(Message.channel.type != "dm" && ServerMap.get(Message.guild.id).server){
 
-        //if so then it checks if the message has im [Something] in it
-        let k = /\b(im|i'm)\s(.+)/ig.exec(Message.content);
-        if(!k)return;
+    //     //if so then it checks if the message has im [Something] in it
+    //     let k = /\b(im|i'm)\s(.+)/ig.exec(Message.content);
+    //     if(!k)return;
 
-        //makes sure the user and the server has the feature
-        if(!ServerMap.get(Message.guild.id).users.has(Message.author.id) || ServerMap.get(Message.guild.id).users.get(Message.author.id)){
-            //if so then it sends a reply
-        Message.channel.send(`Hello ${k[2]}, i'm Dad!`);
-        }
-    }
+    //     //makes sure the user and the server has the feature
+    //     if(!ServerMap.get(Message.guild.id).users.has(Message.author.id) || ServerMap.get(Message.guild.id).users.get(Message.author.id)){
+    //         //if so then it sends a reply
+    //     Message.channel.send(`Hello ${k[2]}, i'm Dad!`);
+    //     }
+    // }
 })
 
 //Triggers when the bot gets invited to a new Server
