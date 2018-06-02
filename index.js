@@ -152,9 +152,9 @@ Bot.on('message', Message => {
 
 
         //checks if you are asking the bot to die
-        if(/(kys|die|fuck\s+(off|you)|kill\s+your\s+self)/gi.test(Message)){
-            Message.channel.send(new Discord.Attachment("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png"));
-        }
+        // if(/(kys|die|fuck\s+(off|you)|kill\s+your\s+self)/gi.test(Message)){
+        //     Message.channel.send(new Discord.Attachment("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png"));
+        // }
 
     }
 
