@@ -184,7 +184,9 @@ Bot.on('guildCreate', g => {
     });
     //Sets the ServerID to true so the bot is enabled
     ServerMap[g.id] = true;
-    SaveServers();
+    SaveServers(() => {
+        
+    });
 })
 
 //Watches out for unhandled rejections and loggs them

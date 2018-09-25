@@ -12,6 +12,7 @@
     "child_process": "^1.0.2",
     "discord.js": "^11.3.0",
     "latest": "^0.2.0",
+    "node-json-db": "^0.9.0",
     "pm2": "^2.9.1",
     "snekfetch": "^3.6.1"
   }
