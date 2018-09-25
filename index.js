@@ -7,13 +7,19 @@ const Settings = require("./settings.json");
 const Package = require("./package.json");
 const Bot = new Discord.Client();
 const Snek = require("snekfetch");
-
-
+var fs = require('fs');
+const File = "./servers.json";
 
 //This is so that server owners can toggle the bot off without having to kick him
-var ServerMap = new Map();
+var ServerMap = {};
 
 const eightball = ["yes", "no", "maybe", "probably", "unlikely"];
+
+const SaveServers = (c) => {
+    fs.writeFile(File, JSON.stringify(ServerMap), () => {
+        c();
+    });
+}
 
 //Triggers when the bot is logged in
 Bot.on('ready', () =>{
@@ -23,7 +29,10 @@ Bot.on('ready', () =>{
     //Loggint amount of servers and members
     console.log(`${Package.name} is online on ${Bot.guilds.size} servers for a total of ${Members} members`);
     //setting all server id's to true so the bot is enabled by default
-    Bot.guilds.forEach(g => {ServerMap.set(g.id, {server: true, users: new Map()});});
+    fs.readFile(File, (err, data) => {
+        if (err) throw err;
+        ServerMap = JSON.parse(data)
+    });
 })
 
 
@@ -70,30 +79,28 @@ Bot.on('message', Message => {
             return Message.react("✅");
         }
 
-
-		if(/stop\sall/ig.test(Message)){
-			if(Message.member.hasPermission("ADMINISTRATOR") || Message.author.id == Settings.id){
-				ServerMap.get(Message.guild.id).server = false;
-				return Message.react("✅");
-			}else{
-				return Message.react("❌");
-			}
-		}
 		else if(/stop/ig.test(Message)){//checking if you are asking for the bot to stop
-			ServerMap.get(Message.guild.id).users.set(Message.id, false);
-			return Message.react("✅");
+            if (Message.member.hasPermission("ADMINISTRATOR") || Message.author.id == Settings.id) {
+                delete(ServerMap[Message.guild.id])
+                SaveServers(() => {
+                    Message.react("✅");
+                })
+                return 
+            } else {
+                return Message.react("❌");
+            }
 		}
 
-		if(/start\sall/ig.test(Message)){
-			if(Message.member.hasPermission("ADMINISTRATOR") || Message.author.id == Settings.id){
-				ServerMap.get(Message.guild.id).server = true;
-				return Message.react("✅");
-			}else{
-				return Message.react("❌");
-			}
-		}else if(/start/ig.test(Message)){ //checking if you are asking for the bot to resume
-            ServerMap.get(Message.guild.id).users.set(Message.id, true);
-            return Message.react("✅");
+		if(/start/ig.test(Message)){ //checking if you are asking for the bot to resume
+            if (Message.member.hasPermission("ADMINISTRATOR") || Message.author.id == Settings.id) {
+                ServerMap[Message.guild.id] = true;
+                SaveServers(() => {
+                    Message.react("✅");
+                })
+                return;
+            } else {
+                return Message.react("❌");
+            }
         }
 
         //checks if the word dadjoke appears somewhere in the message
@@ -158,29 +165,26 @@ Bot.on('message', Message => {
 
     }
 
-    // //checks if the server has the bot enabled
-    // if(Message.channel.type != "dm" && ServerMap.get(Message.guild.id).server){
+    //checks if the server has the bot enabled
+    if(Message.channel.type != "dm" && ServerMap[Message.guild.id] === true){
 
-    //     //if so then it checks if the message has im [Something] in it
-    //     let k = /\b(im|i'm)\s(.+)/ig.exec(Message.content);
-    //     if(!k)return;
-
-    //     //makes sure the user and the server has the feature
-    //     if(!ServerMap.get(Message.guild.id).users.has(Message.author.id) || ServerMap.get(Message.guild.id).users.get(Message.author.id)){
-    //         //if so then it sends a reply
-    //     Message.channel.send(`Hello ${k[2]}, i'm Dad!`);
-    //     }
-    // }
+        //if so then it checks if the message has im [Something] in it
+        let k = /\b(im|i'm)\s(.+)/ig.exec(Message.content);
+        if(!k)return;
+        //sends the message back
+        Message.channel.send(`Hello ${k[2]}, i'm Dad!`);
+    }
 })
 
 //Triggers when the bot gets invited to a new Server
 Bot.on('guildCreate', g => {
     //Sends the Owner a Dm telling him how to stop the Bot
     g.owner.createDM().then(Discord => {
-        Discord.send("heya im Dadbot i will do stupid shit. if you want me to stop just send **@DadBot stop all**, and you want me to resume my shenanigans then use **start** instead of stop");
+        Discord.send("heya im Dadbot i will do stupid shit. if you want me to stop just send **@DadBot stop**, and you want me to resume my shenanigans then use **start** instead of stop");
     });
     //Sets the ServerID to true so the bot is enabled
-    ServerMap.set(g.id, {server: true, users: new Map()});
+    ServerMap[g.id] = true;
+    SaveServers();
 })
 
 //Watches out for unhandled rejections and loggs them
