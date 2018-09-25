@@ -75,7 +75,7 @@ Bot.on('message', Message => {
             **daddy** will fulfill any of your pleasures
             **proud** will tell you if he is proud of you or not.
             
-            If you want to Invite me you can use this Link: https: //discordapp.com/oauth2/authorize?client_id=397646331415494694&scope=bot&permissions=314432`//**kys** *(or asking the bot to die in any way) will make him shut down
+            If you want to Invite me you can use this Link: https://discordapp.com/oauth2/authorize?client_id=397646331415494694&scope=bot&permissions=314432`//**kys** *(or asking the bot to die in any way) will make him shut down
             Message.member.send(reply);
             return Message.react("✅");
         }
