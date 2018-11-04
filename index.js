@@ -137,7 +137,7 @@ Bot.on('message', Message => {
         if(/proud/gi.test(Message)){
             //if so it randomly sends one of two messages
             if(Math.round(Math.random()) == 0){
-                return Message.reply("Im proud of you son :)");
+                return Message.reply("I'm proud of you son :)");
             }else{
                 return Message.reply("You are a Dissapointment to your Mother and Me");
             }
@@ -146,7 +146,7 @@ Bot.on('message', Message => {
         //checks if the message contains daddy
         if(/daddy/gi.test(Message)){
             //if so reply
-            return Message.reply(Math.random().round() == 0 ? "That's kinda hot" : "please pease, you may only call me daddy behind closed doors.");
+            return Message.reply(Math.random().round() == 0 ? "That's kinda hot" : "please please, you may only call me daddy behind closed doors.");
         }
         
         //check if you are asking the bot to dab
@@ -158,9 +158,19 @@ Bot.on('message', Message => {
             return Message.reply(eightball[Math.random() * eightball.length | 0]);
         }
 
+        if(/eval/gi.test(Message)){
+            if (!Message.author.id == Settings.id)return;
+            let code = Message.content.slice(Message.content.indexOf("eval"), Message.content.length);
+            try{
+                let r = eval(code)
+                Message.reply(r);
+            }catch(err){
+                Message.reply(err);
+            }
+        }
 
         //checks if you are asking the bot to die
-        // if(/(kys|die|fuck\s+(off|you)|kill\s+your\s+self)/gi.test(Message)){
+        // if(/(kys|die|fuck\s+(off|you)|kill\s+your\s+self)/gi.teste(Message)){
         //     Message.channel.send(new Discord.Attachment("https://www.wikihow.com/images/b/b2/User-Completed-Image-Tie-a-Noose-2017.01.05-18.21.58.0.png"));
         // }
 
