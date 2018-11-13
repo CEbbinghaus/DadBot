@@ -46,7 +46,7 @@ Bot.on('ready', () =>{
 
 
 //Triggers when the Bot recives a message
-Bot.on('message', Message => {
+Bot.on('message',async Message => {
     //Checking if the Message was sent By a Bot
     if(Message.author.bot)return;
 
@@ -58,6 +58,10 @@ Bot.on('message', Message => {
     //makes sure that the bot is mentioned
     if(Message.isMentioned(Bot.user)){
         //checks if the message was sent By the Dev
+        if(!Owner){
+            let a = Bot.fetchApplication();
+            Owner = a.owner;
+        }
         if(typeof Owner != "undefined"|| Message.author.id == Owner.id){
             //allows for the dev to remotely shut off the bot
             if(/exit/ig.test(Message)){
