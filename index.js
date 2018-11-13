@@ -9,9 +9,15 @@ const Bot = new Discord.Client();
 const Snek = require("snekfetch");
 var fs = require('fs');
 const File = "./servers.json";
-
+let Owner;
 //This is so that server owners can toggle the bot off without having to kick him
 var ServerMap = {};
+
+const Reaction = {
+    done: "✅",
+    failed: "❌",
+    timeout: 5e3
+}
 
 const eightball = ["yes", "no", "maybe", "probably", "unlikely"];
 
@@ -29,6 +35,9 @@ Bot.on('ready', () =>{
     //Loggint amount of servers and members
     console.log(`${Package.name} is online on ${Bot.guilds.size} servers for a total of ${Members} members`);
     //setting all server id's to true so the bot is enabled by default
+    Bot.fetchApplication().then(a => {
+        Owner = a.owner
+    })
     fs.readFile(File, (err, data) => {
         if (err) throw err;
         ServerMap = JSON.parse(data)
@@ -49,11 +58,46 @@ Bot.on('message', Message => {
     //makes sure that the bot is mentioned
     if(Message.isMentioned(Bot.user)){
         //checks if the message was sent By the Dev
-        if(Message.author.id == Settings.id){
+        if(typeof Owner != "undefined"|| Message.author.id == Owner.id){
             //allows for the dev to remotely shut off the bot
             if(/exit/ig.test(Message)){
                 Child.exec("pm2 delete DadBot", (e, out, err) => {
-                    return Message.reply("now exiting  " + out);
+                    if (e) {
+                        Message.channel.send(e).then(() => {
+                            Message.react(Reaction.failed).then(r => {
+                                setTimeout(r.remove(), Reaction.timeout);
+                            })
+                        })
+                    } else {
+                        Message.react(Reaction.done).then(r => {
+                            setTimeout(r.remove(), Reaction.timeout)
+                        })
+                    }
+                    return
+                })
+            }
+            if(/update/ig.test(Message)){
+                Child.exec("git pull", () => {
+                    Child.exec("pm2 restart DadBot", () => {
+                        Message.react(Reaction.done).then(r => {
+                            setTimeout(r.remove(), Reaction.timeout);
+                        })
+                    })
+                })
+            }
+            if (/restart/ig.test(Message)) {
+                Child.exec("pm2 restart DadBot", (e, out, err) => {
+                    if(e){
+                        Message.channel.send(e).then(() => {
+                            Message.react(Reaction.failed).then(r => {
+                                setTimeout(r.remove(), Reaction.timeout);
+                            })
+                        })
+                    }else{
+                        Message.react(Reaction.done).then(r => {
+                            setTimeout(r.remove(), Reaction.timeout)
+                        })
+                    }
                 })
             }
         }
@@ -77,18 +121,26 @@ Bot.on('message', Message => {
             
             If you want to Invite me you can use this Link: https://discordapp.com/oauth2/authorize?client_id=397646331415494694&scope=bot&permissions=314432`//**kys** *(or asking the bot to die in any way) will make him shut down
             Message.member.send(reply);
-            return Message.react("✅");
+            Message.react(Reaction.done).then(m => {
+                setTimeout(() => { m.remove() }, Reaction.timeout)
+            })
+            return
         }
 
 		else if(/stop/ig.test(Message)){//checking if you are asking for the bot to stop
             if (Message.member.hasPermission("ADMINISTRATOR") || Message.author.id == Settings.id) {
                 delete(ServerMap[Message.guild.id])
                 SaveServers(() => {
-                    Message.react("✅");
+                    Message.react(Reaction.done).then(m => {
+                        setTimeout(() => {m.remove()}, Reaction.timeout)
+                    })
                 })
                 return 
             } else {
-                return Message.react("❌");
+                Message.react(Reaction.failed).then(m => {
+                    setTimeout(() => { m.remove() }, Reaction.timeout)
+                })
+                return
             }
 		}
 
@@ -96,11 +148,16 @@ Bot.on('message', Message => {
             if (Message.member.hasPermission("ADMINISTRATOR") || Message.author.id == Settings.id) {
                 ServerMap[Message.guild.id] = true;
                 SaveServers(() => {
-                    Message.react("✅");
+                    Message.react(Reaction.done).then(m => {
+                        setTimeout(() => { m.remove() }, Reaction.timeout)
+                    })
                 })
                 return;
             } else {
-                return Message.react("❌");
+                Message.react(Reaction.failed).then(m => {
+                    setTimeout(() => { m.remove() }, Reaction.timeout)
+                })
+                return
             }
         }
 
