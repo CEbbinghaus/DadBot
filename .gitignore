@@ -1,5 +1,3 @@
 /settings.json
-/test.js
-node_modules/*
 /servers.json
-temp.js
+node_modules/*
