@@ -59,7 +59,7 @@ Bot.on('message',async Message => {
     if(Message.isMentioned(Bot.user)){
         //checks if the message was sent By the Dev
         if(!Owner){
-            let a = Bot.fetchApplication();
+            let a = await Bot.fetchApplication();
             Owner = a.owner;
         }
         if(typeof Owner != "undefined"|| Message.author.id == Owner.id){
