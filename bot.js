@@ -18,8 +18,16 @@ Bot.commands = [];
 
 Bot.SaveServers = (c) => {
     fs.writeFile(File, JSON.stringify(Bot.ServerMap), () => {
+        if(c)
         c();
     });
+}
+
+Bot.GetUsers = () => {
+    let Members = 0;
+    //Adding onto the Member Count
+    Bot.guilds.forEach(g => Members += g.memberCount);
+    return Members;
 }
 
 Bot.LoadCommands = () => {
@@ -33,11 +41,8 @@ Bot.on('ready', () =>{
     Bot.fetchApplication().then(a => {
         Bot.owner = a.owner
     })
-    let Members = 0;
-    //Adding onto the Member Count
-    Bot.guilds.forEach(g => Members += g.memberCount);``
     //Logging amount of servers and members
-    console.log(`${Package.name} is online on ${Bot.guilds.size} servers for a total of ${Members} members`);
+    console.log(`${Package.name} is online on ${Bot.guilds.size} servers for a total of ${Bot.GetUsers()} members`);
     
     Bot.LoadCommands();
     fs.readFile(File, (err, data) => {

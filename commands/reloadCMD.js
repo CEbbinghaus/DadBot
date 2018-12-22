@@ -14,8 +14,8 @@ module.exports = {
         run: (bot, message, settings) => {
             fs.readdirSync("./commands/").forEach(v => {
                 try{
-                    delete require.cache[require.resolve('./commands/' + v)];
-                }catch(e){}
+                    delete require.cache[require.resolve('./' + v)];
+                }catch(e){console.log(e.message)}
             })
             bot.LoadCommands();
             Confirm(message);

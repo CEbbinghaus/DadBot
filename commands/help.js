@@ -29,7 +29,7 @@ module.exports = {
             });
             reply.addField("Commands", commands.join(""));
             reply.addField("Invites", `If you need any Additional Assistance join my owners Bot server: https://discord.gg/KBrxfzq.
-            If you want to Invite me you can use this Link: https://discordapp.com/oauth2/authorize?client_id=397646331415494694&scope=bot&permissions=314432`)
+            If you want to Invite me you can use this Link: https://goo.gl/gq4t6z`)
             message.author.send(reply);
             Confirm(message);
             return
