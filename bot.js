@@ -33,7 +33,9 @@ Bot.GetUsers = () => {
 Bot.GetTotalUsers = async () => {
     return (await Bot.shard.broadcastEval('this.GetUsers()')).reduce((prev, val) => prev + val, 0);
 }
-
+Bot.SetActivity = async () => {
+    Bot.user.setActivity(`${await Bot.GetTotalServers()} Servers`, { type: "WATCHING" });
+}
 Bot.GetTotalServers = async () => {
     return (await Bot.shard.broadcastEval('this.guilds.size')).reduce((prev, val) => prev + val, 0);    
 }
@@ -53,10 +55,12 @@ Bot.on('ready', async () =>{
     let servers = await Bot.GetTotalServers();
     //Logging amount of servers and members
     console.log(`${Package.name} is online on ${Bot.guilds.size} servers for a total of ${Bot.GetUsers()} members`);
-    Bot.user.setActivity(`${servers} Servers`, { type: "WATCHING" });
-    dbl.postStats(servers)
-    .then(() => console.log("Posted Stats"))
-    .catch(error => console.log(error))
+    if(Bot.shard.id + 1 == Bot.shard.count){
+        dbl.postStats(servers)
+        .then(() => console.log("Posted Stats"))
+        .catch(error => console.log(error))
+        Bot.shard.broadcastEval("this.SetActivity()");
+    }
     fs.readFile(File, (err, data) => {
         if (err) throw err;
         Bot.ServerMap = JSON.parse(data)
