@@ -5,6 +5,7 @@ const Child = require("child_process");
 
 //Importing Settings Such as Dev ID and Token
 const Settings = require("./settings.json");
+const dbl = new (require('dblapi.js'))(Settings.DBLToken);
 //Importing Bot Name
 const Package = require("./package.json");
 const Snek = require("snekfetch");
@@ -29,6 +30,13 @@ Bot.GetUsers = () => {
     Bot.guilds.forEach(g => Members += g.memberCount);
     return Members;
 }
+Bot.GetTotalUsers = async () => {
+    return (await Bot.shard.broadcastEval('this.GetUsers()')).reduce((prev, val) => prev + val, 0);
+}
+
+Bot.GetTotalServers = async () => {
+    return (await Bot.shard.broadcastEval('this.guilds.size')).reduce((prev, val) => prev + val, 0);    
+}
 
 Bot.LoadCommands = () => {
     Bot.commands = fs.readdirSync("./commands/").map(v => {
@@ -37,14 +45,18 @@ Bot.LoadCommands = () => {
 }
 
 //Triggers when the bot is logged in
-Bot.on('ready', () =>{
+Bot.on('ready', async () =>{
     Bot.fetchApplication().then(a => {
         Bot.owner = a.owner
     })
+    Bot.LoadCommands();
+    let servers = await Bot.GetTotalServers();
     //Logging amount of servers and members
     console.log(`${Package.name} is online on ${Bot.guilds.size} servers for a total of ${Bot.GetUsers()} members`);
-    
-    Bot.LoadCommands();
+    Bot.user.setActivity(`${servers} Servers`, { type: "WATCHING" });
+    dbl.postStats(servers)
+    .then(() => console.log("Posted Stats"))
+    .catch(error => console.log(error))
     fs.readFile(File, (err, data) => {
         if (err) throw err;
         Bot.ServerMap = JSON.parse(data)

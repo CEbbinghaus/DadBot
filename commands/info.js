@@ -13,8 +13,8 @@ module.exports = {
         weight: 500,
         regex: /info/gi,
         run: async (bot, message, settings) => {
-            let TotalServers = (await bot.shard.broadcastEval('this.guilds.size')).reduce((prev, val) => prev + val, 0)
-            let TotalMembers = (await bot.shard.broadcastEval('this.GetUsers()')).reduce((prev, val) => prev + val, 0)
+            let TotalServers = await bot.GetTotalServers()
+            let TotalMembers = await bot.GetTotalUsers()
             let Members = 0;
             bot.guilds.forEach(g => Members += g.memberCount);
             let info = new RichEmbed()
