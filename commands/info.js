@@ -1,5 +1,6 @@
 const {RichEmbed} = require("discord.js");
 const {Confirm} = require("../util/interractions");
+const {clearLogs} = require("../util/utilities");
 module.exports = {
     help: {
         perms: null,
@@ -20,8 +21,8 @@ module.exports = {
                 .setTitle("Info")
                 .setColor("edaa63")
                 .setAuthor("DadBot", bot.user.avatarURL)
-                .addField("General:", "Hi im DadBot. i do things you Dad would do ~~if you had one(coz lets be honest. why else would you invite him)~~. with any help just mention me and include the word help")
-                .addField("Shard:", `Current Shard ID: ${bot.shard.id}
+                .addField("General:", "Hi im DadBot. i do things your Dad would do ~~if you had one (coz lets be honest. why else would you invite him)~~. with any help just mention me and include the word help")
+                .addField("Shard:", `Current Shard ID: ${bot.shard.id + 1}/${bot.shard.count}
                 Users: ${Members}
                 Servers: ${bot.guilds.size}`)
                 .addField("Bot:", `Users: ${TotalMembers}

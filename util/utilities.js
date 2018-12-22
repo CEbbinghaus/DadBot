@@ -47,3 +47,7 @@ module.exports.checkPermissions = (helpObj, message, bot) => {
   }
   return false;
 }
+
+module.exports.clearLogs = () => {
+  console.log(Array(40).join("\n"));
+}
