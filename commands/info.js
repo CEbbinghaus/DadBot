@@ -33,6 +33,7 @@ module.exports = {
                 If you instead want to invite Me to your server you can use this link: https://goo.gl/gq4t6z`)
             message.author.send(info);
             Confirm(message);
+            bot.SetActivity();
         }
     }
 }

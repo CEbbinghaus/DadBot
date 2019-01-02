@@ -11,11 +11,11 @@ module.exports = {
         weight: 500,
         regex: /stop/ig,
         run: (bot, message, settings) => {
-            delete(bot.ServerMap[message.guild.id])
-            bot.SaveServers(() => {
+            console.log(settings)
+            settings.enabled = false;
+            bot.DataBase.update({id: message.guild.id}, settings, () => {
                 Confirm(message);
             })
-            return 
         }
     }
 }

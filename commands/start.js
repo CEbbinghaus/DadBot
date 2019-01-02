@@ -11,11 +11,10 @@ module.exports = {
         weight: 500,
         regex: /start/ig,
         run: (bot, message, settings) => {
-            bot.ServerMap[message.guild.id] = true;
-            bot.SaveServers(() => {
+            settings.enabled = true;
+            bot.DataBase.update({id: message.guild.id}, settings, () => {
                 Confirm(message);
             })
-            return;
         }
     }
 }

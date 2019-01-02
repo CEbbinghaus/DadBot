@@ -10,7 +10,7 @@ module.exports = {
     },
     command: {
         weight: 500,
-        regex: /rldCMD/ig,
+        regex: /rldCMD|reload|rld/ig,
         run: (bot, message, settings) => {
             fs.readdirSync("./commands/").forEach(v => {
                 try{

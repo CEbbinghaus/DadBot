@@ -1,3 +1,7 @@
 {
-    "token" : "Bot Token Here"
+    "token": "Bot Token goes Here",
+    "DBLToken": "Discord Bot List Token goes Here",
+    "Host": "Host url of the Mongodb Database",
+    "Username": "Username of the Mongodb Database",
+    "Password": "Password of the Mongodb Database"
 }

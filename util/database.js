@@ -1,120 +1,206 @@
-const {MongoClient} = require('mongodb');
-const {EventEmitter} = require("events");
-const {TrueType} = require("./utilities");
+const {
+    EventEmitter
+} = require("events");
+const {
+    MongoClient
+} = require("mongodb");
 
-class DataBase extends EventEmitter{
-    constructor(name, DBname = "Bots", url = 'localhost'){
+function partial(func /*, 0..n args */ ) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function () {
+        var allArguments = args.concat(Array.prototype.slice.call(arguments));
+        return func.apply(this, allArguments);
+    };
+}
+async function AsyncArray(a) {
+    let e = a.shift();
+    if (!e) return;
+    await e();
+    if (a)
+        AsyncArray(a);
+}
+const Events = {
+    read: "OnRead",
+    write: "OnWrite",
+    update: "OnUpdate",
+    connect: "OnConnect",
+    disconnect: "OnDisconnect",
+    delete: "OnDelete"
+};
+const queryResult = function(result){
+    this.result = result || null;
+    this.resolved = result ? true : false;
+};
+const CacheResult = function(server){
+    this.LastQuery = Date.now();
+    this.Server = server;
+}
+module.exports.DataBaseEvents = Events;
+class DataBase extends EventEmitter {
+    constructor(host = "localhost", CollectionName, Username, Password) {
         super();
-        this.auth = process.env.DB_Auth;
-        this.DataBaseName = DBname;
-        this.name = name;
-        this.url = url;
-        this.client = 
-        this.database;
-        this.table;
-        this.ready = false;
-        this.init();
+        if (!CollectionName) throw "A Collection Name Must be Specified";
+        let hasAuth = (Username && Password) ? true : false;
+        this.url = `mongodb://${hasAuth ? `${encodeURIComponent(Username)}:${encodeURIComponent(Password)}@` : ""}${host}:27017/?${hasAuth ? "authMechanism=SCRAM-SHA-1" : ""}&authSource=Bots`;
+        this.name = CollectionName;
+        this.host = new MongoClient(this.url, {
+            useNewUrlParser: true
+        });
+        this.collection = null;
+        this.database = null;
+        this.connected = false;
+        this._queue = [];
+        this.connect(this.name);
     }
-    async init(){
-        const user = encodeURIComponent('dave');
-        const password = encodeURIComponent('abc123');
-        const authMechanism = 'DEFAULT';
-    
-        // Connection URL
-        const url = `mongodb://${user}:${password}@${url}:27017/?authMechanism=${authMechanism}`;
-        MongoClient.connect(this.url, { useNewUrlParser: true },async (err, client) => {
-            if(!client)throw "Missing Client Object. Could not Load Database";
-            this.client = client;
-            this.database = this.client.db(this.DataBaseName);
-            this.table = this.database.collection(this.name);
-            this.ready = true;
-            this.emit("ready", this);
+    connect(name) {
+        this.host.connect((err) => {
+            if (err) throw err;
+            this.collection = this.host.db("Bots");
+            this.database = this.collection.collection(name || this.name);
+            this.connected = true;
+            if (this._queue.length) AsyncArray(this._queue);
+            this.emit(Events.connect, this);
         });
     }
-    async write(o, c){
-        if(c && TrueType(c) == "function"){
-            this.__Write(o, c);
-        }else{
-            return new Promise((res, rej) => {
-                try{
-                    this.__Write(o, res);
-                }catch(err){
-                    rej(err);
-                }
-            })
-        }
+    async read(o, c) {
+        return this._runCommand(c, async c => {
+            let v = await this.database.findOne(o);
+            if (!v) throw "Nothing Was Found";
+            c(v);
+            this.emit(Events.read, v);
+        });
     }
-    async __Write(o, c){
-        let type = TrueType(o)
-        if(type != "array" && type != "object")throw "You can only Write a Object or an array of objects";
-        if(!this.ready)await this.ready;
-        if(type == "object")o = [o];
-        this.emit("write", o);
-        this.table.insertMany(o, (err, res) => {
-            if(err)throw err;
-            c(res);
-        })
+    async write(o, c) {
+        return this._runCommand(c, async c => {
+            let exists = (await this._queryObject(o)).resolved;
+            if (!exists)
+                this.database.insertOne(o).then(v => {
+                    c(v.ops[0]);
+                    this.emit(Events.write, v.ops[0]);
+                });
+            else {
+                throw "This Element Exists Already";
+            }
+        });
     }
-    async read(o, c){
-        if(c && TrueType(c) == "function"){
-            this.__Read(o, c);
-        }else{
-            return new Promise((res, rej) => {
-                try{
-                    this.__Read(o, res);
-                }catch(err){
-                    rej(err);
-                }
-            })
-        }
+    async exists(o, c) {
+        return this._runCommand(c, async c => {
+            let exists = (await this._queryObject(o)).resolved;
+            c(exists);
+        });
     }
-    async __Read(o, c){
-        this.table.find(o).toArray((err, r) => {
-            if(err)throw err;
-            this.emit("read", r);
-            c(r);
-        })
+    async update(o1, o2, c) {
+        return this._runCommand(c, async c => {
+            let exists = (await this._queryObject(o1)).resolved;
+            if (exists)
+                this.database.updateOne(o1, {
+                    $set: o2
+                }).then(v => {
+                    c(Object.assign(o1, o2));
+                    this.emit(Events.update, Object.assign(o1, o2));
+                });
+            else throw "Element Doesnt Exist";
+        });
     }
-    async delete(o, c){
-        if(c && TrueType(c) == "function"){
-            this.__Delete(o, c);
-        }else{
-            return new Promise((res, rej) => {
-                try{
-                    this.delete(o, res)
-                }catch(err){
-                    rej(err);
-                }
-            })
-        }
+    async delete(o, c) {
+        return this._runCommand(c, async c => {
+            let exists = (await this._queryObject(o)).resolved;
+            if (exists)
+                this.database.deleteOne(o).then(v => {
+                    c(v);
+                    this.emit(Events.delete, o);
+                });
+            else throw "Object Doesnt Exist";
+        });
     }
-    async __Delete(o, c){
-        this.emit("delete", o);
-        this.table.deleteMany(o, () => {
-            c();
-        })
+    _runCommand(c, f) {
+        if (!f) throw "You Must Provide a Function";
+        if (!c) return new Promise(res => this._runCommand(res, f));
+        if (typeof c == "function") {
+            if (this.connected){
+                f(c).catch(v => {
+                    console.error(v);
+                    c(null, v);
+                });
+            }
+            else this._queue.push(partial(f, c));
+        }else throw "Callback Must be Specified";
     }
-    async update(f, o, c){
-        if(c && TrueType(c) == "function"){
-            this.__Update(f, o, c);
-        }else{
-            return new Promise((res, rej) => {
-                try{
-                    this.__Update(f, o, res);
-                }catch(err){
-                    rej(err);
-                }
-            })
-        }
+    
+    async disconnect() {
+        this.connected = false;
+        this.emit(Events.disconnect);
+        this.disconnect();
     }
-    async __Update(f, o, c){
-        this.table.updateMany(f, {$set: o}, (err, r) => {
-            if(err)throw err;
-            c(r);
-        })
+    _queryObject(o) {
+        return new Promise(res => {
+            let run = () => {
+                this.database.findOne(o).then(v => {
+                    res(new queryResult(v));
+                });
+            };
+            if (this.connected) run();
+            else this._queue.push(run);
+        });
     }
-    close(){
-        this.client.close();
-    }
+
 }
 module.exports.DataBase = DataBase;
+
+class CachedDataBase extends DataBase {
+    constructor(host, CollectionName, Username, Password) {
+        super(host, CollectionName, Username, Password);
+        this.Cache = new Map();
+        this.on(Events.read, this.handleEvents);
+        this.on(Events.write, this.handleEvents);
+        this.on(Events.update, o => this.handleEvents(o, 'Update'));
+        this.on(Events.delete, o => this.handleEvents(o, 'Delete'));
+        this.LastPass = Date.now();
+        this.CollectGarbage();
+    }
+    handleEvents(o, options){
+        if (!o || !o.id) return;
+        switch (options) {
+            case "Update":
+                this.Cache.set(o.id, Object.assign(this.Cache.has(o.id) ? this.Cache.get(o.id) : this._queryObject(o), new CacheResult(o)));
+                break;
+            case "Delete":
+                if (this.Cache.has(o.id)) {
+                    this.Cache.delete(o.id);
+                }
+                break;
+            default:
+                this.Cache.set(o.id, new CacheResult(o))
+        }
+    };
+    CollectGarbage(){
+        let cleared = [];
+        for (let [k, v] of this.Cache) {
+            if(v.LastQuery < this.LastPass){
+                cleared.push(k);
+                this.Cache.delete(k);
+            }
+        }
+        if (Date.now() - this.LastPass > 100) console.log(`Cleared ${cleared.length} Servers from the Cache`);
+        this.LastPass = Date.now();
+        setTimeout(this.CollectGarbage, 6e4 * 60);
+    }
+    async _queryObject(o) {
+        return new Promise(res => {
+            if(o.id && this.Cache.has(o.id)){
+                let result = this.Cache.get(o.id);
+                res(new queryResult(result.Server));
+                result.LastQuery = Date.now();
+                return;
+            }
+            let run = () => {
+                this.database.findOne(o).then(v => {
+                    res(new queryResult(v));
+                });
+            };
+            if (this.connected) run();
+            else this._queue.push(run);
+        });
+    }
+}
+module.exports.CachedDataBase = CachedDataBase;
