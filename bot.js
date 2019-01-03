@@ -1,6 +1,6 @@
 const {Client} = require("discord.js");
 const {helpReact} = require("./util/interractions")
-const {checkPermissions} = require("./util/utilities");
+const {checkPermissions, Cleanup} = require("./util/utilities");
 const {CachedDataBase} = require("./util/database");
 const {Server} = require("./util/classes")
 //Importing Settings Such as Token
@@ -13,6 +13,7 @@ const Bot = new Client();
 
 Bot.commands = [];
 Bot.DataBase = DataBase;
+Bot.UnderMaintenence = Settings.maintenence || false;
 
 
 Bot.GetUsers = () => {
@@ -22,11 +23,18 @@ Bot.GetTotalUsers = async () => {
     return (await Bot.shard.broadcastEval('this.GetUsers()')).reduce((prev, val) => prev + val, 0);
 }
 Bot.SetActivity = async () => {
-    let servers = await Bot.GetTotalServers();
-    Bot.user.setActivity(`${servers} Servers`, { type: "WATCHING" });
-    dbl.postStats(servers)
-        .then(() => console.log("Posted Stats"))
-        .catch(error => console.log(error));
+    if(Bot.UnderMaintenence)
+        Bot.user.setActivity("Currently Under Maintenence", { type: "PLAYING" });
+    else{
+        let servers = await Bot.GetTotalServers();
+        Bot.user.setActivity(`${servers} Servers`, { type: "WATCHING" });
+    }
+}
+Bot.SetMaintenence = async m => {
+    Bot.UnderMaintenence = m;
+    await Bot.shard.broadcastEval(`if(this.shard.id != ${Bot.shard.id})this.SetMaintenence();this.SetActivity()`)
+    Bot.SetActivity();
+    return;
 }
 Bot.GetTotalServers = async () => {
     return (await Bot.shard.broadcastEval('this.guilds.size')).reduce((prev, val) => prev + val, 0);    
@@ -45,17 +53,19 @@ Bot.on('ready', async () =>{
     })
     Bot.LoadCommands();
     //Logging amount of servers and members
-    console.log(`${Bot.user.username} is online on ${Bot.guilds.size} servers for a total of ${Bot.GetUsers()} members`);
-    if(Bot.shard.id + 1 == Bot.shard.count){
-        Bot.shard.broadcastEval("this.SetActivity()");
-    }
+    console.log(`Started Shard ${Bot.shard.id} on ${Bot.guilds.size} servers for a total of ${Bot.GetUsers()} members`);
+    dbl.postStats(Bot.guilds.size, Bot.shard.id, Bot.shard.count)
+        .then(() => console.log("Published Stats to DBL"))
+    Bot.SetActivity()
 })
 //Triggers when the Bot recives a message
 Bot.on('message',async Message => {
+    if(!Bot.owner)return;
     //Checking if the Message was sent By a Bot
     if(Message.author.bot)return;
+    if(Bot.UnderMaintenence && Message.author.id != Bot.owner.id)return;
 
-    let server = await DataBase.read({id: Message.guild.id});
+    let server = Message.channel.type == "dm" ? new Server() : await DataBase.read({id: Message.guild.id});
     if (!server) {
         server = new Server(Message.guild);
         DataBase.write(server);
@@ -72,7 +82,10 @@ Bot.on('message',async Message => {
             if(cmd.command.regex != null){
                 if(cmd.command.regex.test(Message)){
                     try{
-                        cmd.command.run(Bot, Message, server);
+                        let e = cmd.command.run(Bot, Message, server)
+                        if(typeof e == Promise)e.catch(err => {
+                            helpReact(Message, err.toString());
+                        })
                         return;
                     }catch(err){
                         helpReact(Message, err.toString());
@@ -93,7 +106,13 @@ Bot.on('message',async Message => {
         let k = /\b(im|i'm|i`m|i‘m)\s(.+)/ig.exec(Message.content);
         if(!k)return;
         //sends the message back
-        Message.channel.send(`Hello ${k[2]}, i'm Dad!`);
+        try{
+            Message.channel.send(`Hello ${k[2]}, i'm Dad!`).catch(msg => {
+                console.log("Caught");
+            });
+        }catch(err){
+            console.log("Couldnt Send")
+        }
     }
 })
 
@@ -104,8 +123,8 @@ Bot.on('guildCreate', g => {
         g.owner.createDM().then(o => {
             o.send("heya im Dadbot i will do stupid shit. if you want me to stop just send **@DadBot stop**, and you want me to resume my shenanigans then use **start** instead");
         });
+        Bot.setActivity();
     });
-    Bot.setActivity();
 })
 Bot.on("guildDelete", async g => {
     if(await DataBase.exists({id: g.id})){
@@ -115,11 +134,14 @@ Bot.on("guildDelete", async g => {
 })
 
 //Watches out for unhandled rejections and loggs them
-process.on("unhandledRejection", console.error);
+Cleanup(() => {
+    Settings.maintenence = Bot.UnderMaintenence;
+    fs.writeFileSync("./settings.json", JSON.stringify(Settings));
+})
 
 
 //Loggs the bot into discord
-Bot.login(Settings.token1);
+Bot.login(Settings.token);
 
 Number.prototype.round = function(){
     return Math.round(this)

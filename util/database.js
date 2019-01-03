@@ -102,6 +102,13 @@ class DataBase extends EventEmitter {
             else throw "Element Doesnt Exist";
         });
     }
+    async updateAll(o1 = {}, o2, c){
+        return this._runCommand(c, async c => {
+            let r = await this.database.updateMany(o1, o2)
+            if(r)throw r;
+            c({}, null);
+        })
+    }
     async delete(o, c) {
         return this._runCommand(c, async c => {
             let exists = (await this._queryObject(o)).resolved;
@@ -112,6 +119,14 @@ class DataBase extends EventEmitter {
                 });
             else throw "Object Doesnt Exist";
         });
+    }
+    async fetchAll(c){
+        return this._runCommand(c, async c => {
+            this.database.find({}).toArray((err, res) => {
+                if(err)return c(null, "Nothing Found");
+                c(res);
+            })
+        })
     }
     _runCommand(c, f) {
         if (!f) throw "You Must Provide a Function";

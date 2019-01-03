@@ -1,5 +1,33 @@
-const {Confirm, Deny} = require("../util/interractions");
-const {DataBase} = require("../util/database")
+const {Confirm, Deny, helpReact} = require("../util/interractions");
+const {clearLogs} = require("../util/utilities")
+const {Client} = require("discord.js");
+const {DataBase: db} = require("../util/database")
+const getChanges = (a, b) => {
+  let resultObj = {};
+  for(let ak in a){
+    let found = false;
+    for(let bk in b){
+      if(ak == bk)
+      found = true;
+    }
+    if(!found){
+      if (!resultObj["$unset"]) resultObj["$unset"] = {};
+      resultObj["$unset"][ak] = 1;
+    }
+  }
+  for (let bk in b) {
+    let found = false;
+    for (let ak in a) {
+      if (ak == bk)
+      found = true;
+    }
+    if (!found){
+     if (!resultObj["$set"]) resultObj["$set"] = {};
+      resultObj["$set"][bk] = b[bk];
+    }
+  }
+  return resultObj;
+}
 module.exports = {
   help: {
     perms: null,
@@ -11,25 +39,21 @@ module.exports = {
   command: {
     weight: 500,
     regex: /refresh|ref/gi,
-    run: async (bot, message, settings) => {
+    run: async (bot = new Client(), message, settings) => {
+      clearLogs()
+      let oldServer = require("../util/classes.js").Server;
       delete require.cache[require.resolve("../util/classes.js")];
-      let {Server} = require("../util/classes.js");
-      let db = bot.DataBase;
-      let guilds = (await bot.shard.broadcastEval(`this.guilds.array()`)).reduce((a, b) => a.concat(b));
-      let reply = await message.channel.send(`Starting the Refreshing of ${guilds.length} guilds`);
-      for(let guildIndex in guilds){
-        let guild = guilds[guildIndex];
-        let exists = await db.exists({id: guild.id});
-        console.log(exists, guild.id);
-        if (exists){
-          db.update({id: guild.id}, new Server(Object.assign(guild, db.read({id: guild.id}))));
-          reply.edit(`Fixed ${guildIndex} / ${guilds.length} guilds`);
-        }else{
-          db.write(new Server(guild));
-          reply.edit(`Fixed ${guildIndex } / ${guilds.length} guilds`);
+      let newServer = require("../util/classes.js").Server;
+      let DataBase = bot.DataBase;
+      let Change = getChanges(new oldServer(), new newServer());
+      if(Object.keys(Change).length == 0)return helpReact(message, "No Changes to be Made");
+      DataBase.updateAll({}, Change, async err => {
+        if(err != null)return helpReact(message, err.toString);
+        else{
+          await bot.shard.broadcastEval("this.DataBase.Cache.clear()");
+          Confirm(message);
         }
-      }
-      reply.edit("Done! Fixed Every Guild")
+      })
     }
   }
 }
