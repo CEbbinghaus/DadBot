@@ -6,7 +6,7 @@ module.exports = {
         owner: true,
         server: false,
         name: "reloadCMD",
-        desk: "testing"
+        desk: "Reloads all Commands"
     },
     command: {
         weight: 500,

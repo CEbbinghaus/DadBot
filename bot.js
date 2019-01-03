@@ -30,9 +30,10 @@ Bot.SetActivity = async () => {
         Bot.user.setActivity(`${servers} Servers`, { type: "WATCHING" });
     }
 }
-Bot.SetMaintenence = async m => {
+Bot.SetMaintenence = async (m, b) => {
     Bot.UnderMaintenence = m;
-    await Bot.shard.broadcastEval(`if(this.shard.id != ${Bot.shard.id})this.SetMaintenence(${m});this.SetActivity()`)
+    if(b)return;
+    await Bot.shard.broadcastEval(`if(this.shard.id != ${Bot.shard.id})this.SetMaintenence(${m}, true);this.SetActivity();`)
     Bot.SetActivity();
     return;
 }
@@ -83,7 +84,7 @@ Bot.on('message',async Message => {
                 if(cmd.command.regex.test(Message)){
                     try{
                         let e = cmd.command.run(Bot, Message, server)
-                        if(typeof e == Promise)e.catch(err => {
+                        if(e instanceof Promise)e.catch(err => {
                             helpReact(Message, err.toString());
                         })
                         return;
@@ -108,6 +109,7 @@ Bot.on('message',async Message => {
         //sends the message back
         try{
             Message.channel.send(`Hello ${k[2]}, i'm Dad!`).catch(msg => {
+                Message.react("🇵");
                 console.log("Caught");
             });
         }catch(err){
