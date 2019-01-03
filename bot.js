@@ -32,7 +32,7 @@ Bot.SetActivity = async () => {
 }
 Bot.SetMaintenence = async m => {
     Bot.UnderMaintenence = m;
-    await Bot.shard.broadcastEval(`if(this.shard.id != ${Bot.shard.id})this.SetMaintenence();this.SetActivity()`)
+    await Bot.shard.broadcastEval(`if(this.shard.id != ${Bot.shard.id})this.SetMaintenence(${m});this.SetActivity()`)
     Bot.SetActivity();
     return;
 }
