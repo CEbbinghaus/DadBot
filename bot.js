@@ -135,6 +135,7 @@ Bot.on("guildDelete", async g => {
 
 //Watches out for unhandled rejections and loggs them
 Cleanup(() => {
+    if(Bot.shard.id != 0)return;
     Settings.maintenence = Bot.UnderMaintenence;
     fs.writeFileSync("./settings.json", JSON.stringify(Settings));
 })
