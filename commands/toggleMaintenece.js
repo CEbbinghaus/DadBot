@@ -16,7 +16,6 @@ module.exports = {
       await Bot.SetMaintenence(!Bot.UnderMaintenence);
       Settings.maintenence = Bot.UnderMaintenence;
       let text = JSON.stringify(Settings);
-      console.log(text);
       if (!text) return message.reply("NO");
       fs.writeFile("./settings.json", text, () => {
         message.channel.send(`Toggled Maintenece to: **${Bot.UnderMaintenence}**`);

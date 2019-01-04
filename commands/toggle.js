@@ -6,7 +6,7 @@ module.exports = {
         owner: false,
         server: true,
         name: "toggle",
-        desk: "toggles a Server Setting. Use: `toggle [setting]` if you dont provide a setting it will list all possible settings instead",
+        desk: "toggles a Server Setting. Use: *toggle [setting]*\nif you dont provide a setting it will list all possible settings instead",
         category: "Server"
     },
     command: {
