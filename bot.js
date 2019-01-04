@@ -78,7 +78,7 @@ Bot.on('message',async Message => {
 
     let server = Message.channel.type == "dm" ? new Server() : await DataBase.read({id: Message.guild.id});
     if (!server) {
-        server = new Server(Message.guild);
+        server = new Server(Message.guild); 
         DataBase.write(server);
     }
     //makes sure that the bot is mentioned

@@ -9,7 +9,7 @@ module.exports = {
     },
     command: {
         weight: 500,
-        regex: /(mom.*gay|gay.*mom)/gi,
+        regex: /((mom|mum)\s*gay)/gi,
         run: (bot, message, settings) => {
             return message.reply("Ur sister a Mister!");
         }
