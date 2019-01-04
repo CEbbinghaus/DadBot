@@ -6,7 +6,6 @@ function ServerSettings(o = {}){
   this.settings = {};
   for(let i in Rules){
     let rule = Rules[i];
-    // console.log(v.setting)
     this.settings[rule.setting] = o.settings ? o.settings[rule.setting] : true;
   }
 }

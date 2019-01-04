@@ -106,6 +106,7 @@ Bot.on('message',async Message => {
         }
     }
     let rules = Bot.rules.filter(v => server.settings[v.setting] == true);
+    if (Message.channel.type == "dm" || Message.channel.permissionsFor(Message.guild.me).has(["SEND_MESSAGES"]))
     for(let rule of rules){
         let results = rule.regex.exec(Message.content);
         if(results){
