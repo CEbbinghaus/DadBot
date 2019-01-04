@@ -31,6 +31,15 @@ module.exports = {
                 if(commandMap[type] == undefined)commandMap[type] = [];
                 commandMap[type].push(`**${c.help.name}** : \`${c.help.desk}\``);
             });
+            if(message.author.id == bot.owner.id && message.content.indexOf("raw") != -1){
+                let t = "";
+                for (let category in commandMap) {
+                    t += `## ${category}\n`
+                    t += commandMap[category].map(v => "* " + v).join("\n") + "\n";
+                }
+                message.reply("```" + t + "```");
+                return;
+            }
             for(let category in commandMap){
                 reply.addField(`**${category}**`, commandMap[category].join("\n"));
             }
