@@ -1,4 +1,5 @@
 const Snek = require("snekfetch");
+const {RichEmbed} = require("discord.js");
 module.exports = {
     help: {
         perms: null,
@@ -14,8 +15,12 @@ module.exports = {
             Snek.get("https://www.reddit.com/r/jokes.json?limit=1000")
             .then(res => {
                 const f= JSON.parse(res.text)
-                 let url = f.data.children[Math.ceil(Math.random() * f.data.children.length - 1)].data;
-                 message.channel.send(url.title + "\n\n" + url.selftext.toString());
+                let url = f.data.children[Math.ceil(Math.random() * f.data.children.length - 1)].data;
+                const reply = new RichEmbed()
+                    .setTitle("A Joke")
+                    .setColor("#34363C")
+                    .addField(url.title, url.selftext.toString());
+                 message.channel.send(reply);
              })
         }
     }

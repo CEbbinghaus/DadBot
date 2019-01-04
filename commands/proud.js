@@ -1,6 +1,6 @@
 const replies = [
     "I'm proud of you son :)",
-    "You are a Dissapointment to your Mother and Me"
+    "You are a Dissapointment to your Mother and I"
 ]
 module.exports = {
     help: {

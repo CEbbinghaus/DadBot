@@ -15,15 +15,15 @@ module.exports = {
         regex: /help/ig,
         run: (bot, message, settings) => {
             let reply = new RichEmbed()
-            .setTitle("Help")
+            .setTitle("DadBot Repository")
             .setAuthor("DadBot", bot.user.avatarURL)
             .setColor("95d4ed")
-            .addField("General:", `
+            .setURL("https://github.com/CEbbinghaus/DadBot")
+            .addField("Help:", `**General:**
             Heya you asked for my help so let me give you a brief overview of what i can do.
             i function using regex so you can just include my commands instead of calling them.
             e.g\n\`@dadbot give me a dad joke\` opposed to \`!dadjoke\``);
-            let commands = fs.readdirSync("./commands/").map(v => {
-                let c = require("./" + v);
+            let commands = bot.commands.map(c => {
                 if(!checkPermissions(c.help, message, bot) && c.help.name)return null;
                 return `**${c.help.name}** : \`${c.help.desk}\`\n`
             });

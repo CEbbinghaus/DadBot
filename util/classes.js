@@ -1,7 +1,13 @@
+const fs = require("fs");
+const Rules = fs.readdirSync("./rules/").map(v => require("../rules/" + v));
 function ServerSettings(o = {}){
   this.id = o.id || null;
-  this.enabled = o.enabled || true;
   this.name = o.name || "";
-  this.server = this.id ? true : false;
+  this.settings = {};
+  for(let i in Rules){
+    let rule = Rules[i];
+    // console.log(v.setting)
+    this.settings[rule.setting] = o.settings ? o.settings[rule.setting] : true;
+  }
 }
 module.exports.Server = ServerSettings;

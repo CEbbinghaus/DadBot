@@ -17,8 +17,8 @@ module.exports = {
                 const f = JSON.parse(res.text)
                 let url = f.data.children[Math.ceil(Math.random() * f.data.children.length - 1)].data;
                 let joke = new RichEmbed()
-                    .setTitle("DadJoke:")
-                    .setColor("960ddb")
+                    .setTitle("A Dad Joke")
+                    .setColor("#34363C")
                     .addField(url.title, url.selftext.toString());
                 message.channel.send(joke);
              })

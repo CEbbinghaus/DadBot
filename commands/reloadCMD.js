@@ -11,13 +11,8 @@ module.exports = {
     command: {
         weight: 500,
         regex: /rldCMD|reload|rld/ig,
-        run: (bot, message, settings) => {
-            fs.readdirSync("./commands/").forEach(v => {
-                try{
-                    delete require.cache[require.resolve('./' + v)];
-                }catch(e){console.log(e.message)}
-            })
-            bot.LoadCommands();
+        run: async (bot, message, settings) => {
+            await bot.shard.broadcastEval("this.LoadRules(); this.LoadCommands()")
             Confirm(message);
         }
     }

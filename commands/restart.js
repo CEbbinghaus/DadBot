@@ -12,15 +12,7 @@ module.exports = {
         weight: 500,
         regex: /restart/,
         run: (bot, message, settings) => {
-            Child.exec("pm2 restart DadBot", (e, out, err) => {
-                if(e){
-                    message.channel.send(e).then(() => {
-                        Deny(message);
-                    })
-                }else{
-                    Confirm(message);
-                }
-            })
+            bot.shard.broadcastEval("process.exit()");
         }
     }
 }

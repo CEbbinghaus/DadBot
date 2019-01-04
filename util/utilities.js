@@ -1,4 +1,3 @@
-const {helpReact} = require("./interractions");
 module.exports.TrueType = v => {
   switch (typeof v) {
     case "object":

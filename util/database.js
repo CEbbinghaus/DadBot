@@ -1,9 +1,6 @@
-const {
-    EventEmitter
-} = require("events");
-const {
-    MongoClient
-} = require("mongodb");
+const {EventEmitter} = require("events");
+const {MongoClient} = require("mongodb");
+const {TrueType} = require("./utilities")
 
 function partial(func /*, 0..n args */ ) {
     var args = Array.prototype.slice.call(arguments, 1);
@@ -18,6 +15,54 @@ async function AsyncArray(a) {
     await e();
     if (a)
         AsyncArray(a);
+}
+const loopObjects = (a, b) => {
+    let res = [];
+    for (let ak in a) {
+        if (ak == "_id") continue;
+        let found = false;
+        for (let bk in b) {
+            if (ak == bk) {
+                if (typeof a[ak] == "object" && a[ak] != null) res.push([ak, loopObjects(a[ak], b[bk])]);
+                found = true;
+            }
+        }
+        if (!found) {
+            res.push([ak, a[ak]]);
+        }
+    }
+    ResObj = {};
+    return res;
+}
+const compressArray = (a = [], s = "") => {
+    if (s.length != 0) s += ".";
+    let res = [];
+    for (let o of a) {
+        if (o.length != 2) continue;
+        if (TrueType(o[1]) == "array") {
+            res = res.concat(compressArray(o[1], s + o[0]));
+        } else {
+            res.push([s + o[0], o[1]]);
+        }
+    }
+    return res;
+}
+const createObject = (a = []) => {
+    let o = {};
+    for (let i of a) {
+        if (i.length == 2) {
+            o[i[0]] = i[1];
+        }
+    }
+    return o;
+}
+const getChanges = (a, b) => {
+    let resultObj = {};
+    let added = createObject(compressArray(loopObjects(b, a)));
+    let removed = createObject(compressArray(loopObjects(a, b)));
+    if (Object.keys(added).length) resultObj["$set"] = added;
+    if (Object.keys(removed).length) resultObj["$unset"] = removed;
+    return resultObj;
 }
 const Events = {
     read: "OnRead",
@@ -189,16 +234,28 @@ class CachedDataBase extends DataBase {
         }
     };
     CollectGarbage(){
-        let cleared = [];
-        for (let [k, v] of this.Cache) {
-            if(v.LastQuery < this.LastPass){
-                cleared.push(k);
-                this.Cache.delete(k);
+        if(this.Cache.size){
+            let cleared = [];
+            for (let [k, v] of this.Cache) {
+                if(v.LastQuery < this.LastPass){
+                    cleared.push(k);
+                    this.Cache.delete(k);
+                }
             }
-        }
-        if (Date.now() - this.LastPass > 100) console.log(`Cleared ${cleared.length} Servers from the Cache`);
+            if (Date.now() - this.LastPass > 100) console.log(`Cleared ${cleared.length} Servers from the Cache`);
+        };
         this.LastPass = Date.now();
-        setTimeout(this.CollectGarbage, 6e4 * 60);
+        setTimeout(this.CollectGarbage.bind(this), 6e4 * 30);
+    }
+    modifyShema(object, c){
+        return this._runCommand(c, async c => {
+            let oldObj = await this.read({});
+            let Change = getChanges(oldObj, object)
+            if(Object.keys(Change).length){
+                this.updateAll({}, Change, c)
+            }
+            c(null, "Nothing To Change");
+        })
     }
     async _queryObject(o) {
         return new Promise(res => {

@@ -1,3 +1,4 @@
+const Settings = require("../settings.json")
 module.exports = {
   help: {
     perms: null,
@@ -11,6 +12,10 @@ module.exports = {
     regex: /maintain|maintenence/gi,
     run: async (Bot, message, settings) => {
       await Bot.SetMaintenence(!Bot.UnderMaintenence);
+      Settings.maintenence = Bot.UnderMaintenence;
+      let text = JSON.stringify(Settings);
+      if (!text) return;
+      fs.writeFileSync("../settings.json", text);
       message.channel.send(`Toggled Maintenece to: **${Bot.UnderMaintenence}**`);
     }
   }
