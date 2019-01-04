@@ -1,3 +1,4 @@
+const fs = require("fs");
 const Settings = require("../settings.json")
 module.exports = {
   help: {
