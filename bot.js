@@ -71,7 +71,6 @@ Bot.on('ready', async () =>{
 })
 //Triggers when the Bot recives a message
 Bot.on('message',async Message => {
-    console.log("Message Recieved: " + Message.content);
     if(!Bot.owner || !Bot.ready)return;
     //Checking if the Message was sent By a Bot
     if(Message.author.bot)return;
