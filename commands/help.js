@@ -18,7 +18,7 @@ module.exports = {
             let reply = new RichEmbed()
             .setTitle("DadBot Repository")
             .setAuthor("DadBot", bot.user.avatarURL)
-            .setColor("95d4ed")
+            .setColor("#34363C")
             .setURL("https://github.com/CEbbinghaus/DadBot")
             .addField("Help:", `**General:**
             Heya you asked for my help so let me give you a brief overview of what i can do.

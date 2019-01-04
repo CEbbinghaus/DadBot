@@ -20,7 +20,7 @@ module.exports = {
             bot.guilds.forEach(g => Members += g.memberCount);
             let info = new RichEmbed()
                 .setTitle("Info")
-                .setColor("edaa63")
+                .setColor("#34363C")
                 .setAuthor("DadBot", bot.user.avatarURL)
                 .addField("General:", "Hi im DadBot. i do things your Dad would do ~~if you had one (coz lets be honest. why else would you invite him)~~. with any help just mention me and include the word help")
                 .addField("Shard:", `Current Shard ID: ${bot.shard.id + 1}/${bot.shard.count}
