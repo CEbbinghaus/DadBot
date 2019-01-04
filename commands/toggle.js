@@ -6,7 +6,8 @@ module.exports = {
         owner: false,
         server: true,
         name: "toggle",
-        desk: "toggles a Serveer Setting. Use without anything else to get a list of all the toggles"
+        desk: "toggles a Serveer Setting. Use without anything else to get a list of all the toggles",
+        category: "Server"
     },
     command: {
         weight: 500,

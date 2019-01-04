@@ -4,7 +4,8 @@ module.exports = {
         owner: false,
         server: true,
         name: "stop [DEPRECHIATED]",
-        desk: "Stops the bot from replying"
+        desk: "Stops the bot from replying",
+        category: "Server"
     },
     command: {
         weight: 500,

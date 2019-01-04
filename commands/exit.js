@@ -6,7 +6,8 @@ module.exports = {
         owner: true,
         server: false,
         name: "exit",
-        desk: "removes the bot from the current PM2 context"
+        desk: "removes the bot from the current PM2 context",
+        category: "Admin"
     },
     command: {
         weight: 500,

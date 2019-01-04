@@ -4,7 +4,8 @@ module.exports = {
         owner: false,
         server: false,
         name: "mom gay",
-        desk: "makes the bot react to the age old your mom gay"
+        desk: "makes the bot react to the age old your mom gay",
+        category: "Fun"
     },
     command: {
         weight: 500,

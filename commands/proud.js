@@ -8,7 +8,8 @@ module.exports = {
         owner: false,
         server: false,
         name: "proud",
-        desk: "Asks the bot if he is proud of you"
+        desk: "Asks the bot if he is proud of you",
+        category: "Fun"
     },
     command: {
         weight: 500,

@@ -5,7 +5,8 @@ module.exports = {
     owner: true,
     server: false,
     name: "maintenence",
-    desk: "Toggles the bot's Maintenence Mode"
+    desk: "Toggles the bot's Maintenence Mode",
+    category: "Admin"
   },
   command: {
     weight: 5,

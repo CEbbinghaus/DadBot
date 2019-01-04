@@ -58,7 +58,8 @@ module.exports = {
     owner: true,
     server: false,
     name: "refresh",
-    desk: "Refreshes all of the Server Configs with an Updated Version"
+    desk: "Refreshes all of the Server Configs with an Updated Version",
+    category: "Admin"
   },
   command: {
     weight: 500,

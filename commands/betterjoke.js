@@ -6,7 +6,8 @@ module.exports = {
         owner: false,
         server: false,
         name: "good joke",
-        desk: "makes dad tell you aactually good joke"
+        desk: "makes dad tell you aactually good joke",
+        category: "Fun"
     },
     command: {
         weight: 450,

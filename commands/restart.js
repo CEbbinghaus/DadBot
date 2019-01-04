@@ -6,7 +6,8 @@ module.exports = {
         owner: true,
         server: false,
         name: "restart",
-        desk: "Restarts the bot"
+        desk: "Restarts the bot",
+        category: "Admin"
     },
     command: {
         weight: 500,

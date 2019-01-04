@@ -8,7 +8,8 @@ module.exports = {
         owner: false,
         server: false,
         name: "daddy",
-        desk: "calls dad daddy ;)"
+        desk: "calls dad daddy ;)",
+        category: "Fun"
     },
     command: {
         weight: 500,

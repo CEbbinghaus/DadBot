@@ -7,7 +7,8 @@ module.exports = {
         owner: false,
         server: false,
         name: "info",
-        desk: "Provides some Information on the Bot"
+        desk: "Provides some Information on the Bot",
+        category: "Utility"
     },
     command: {
         weight: 500,

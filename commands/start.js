@@ -4,7 +4,8 @@ module.exports = {
     owner: false,
     server: true,
     name: "start [DEPRECHIATED]",
-    desk: "Starts the bot's replying function"
+    desk: "Starts the bot's replying function",
+    category: "Server"
   },
   command: {
     weight: 500,

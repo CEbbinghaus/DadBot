@@ -6,7 +6,8 @@ module.exports = {
         owner: true,
         server: false,
         name: "update",
-        desk: "Updates the bot"
+        desk: "Updates the bot",
+        category: "Admin"
     },
     command: {
         weight: 500,

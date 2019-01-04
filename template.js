@@ -4,7 +4,8 @@ module.exports = {
         owner: false,
         server: false,
         name: "test",
-        desk: "testing"
+        desk: "testing",
+        category: ""
     },
     command: {
         weight: 500,

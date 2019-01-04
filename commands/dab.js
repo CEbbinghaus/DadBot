@@ -9,7 +9,8 @@ module.exports = {
         owner: false,
         server: false,
         name: "dab",
-        desk: "Makes Dad do a Dab"
+        desk: "Makes Dad do a Dab",
+        category: "Fun"
     },
     command: {
         weight: 500,
