@@ -16,7 +16,7 @@ module.exports = {
           let msg = message.content.toLowerCase();
           let DataBase = bot.DataBase;
           for (let rule of bot.rules){
-            if(msg.indexOf(rule.setting.toLowerCase()) != -1){
+            if(msg.search(new RegExp(rule.setting, "gi")) != -1){
               settings.settings[rule.setting] = !settings.settings[rule.setting];
               DataBase.update({id: message.guild.id}, settings);
               return message.channel.send(`Toggled ${rule.setting} to ${settings.settings[rule.setting]}`);

@@ -69,24 +69,23 @@ Bot.on('ready', async () =>{
     await Bot.DataBase.modifyShema(new Server());
     Bot.ready = true;
 })
-//Triggers when the Bot recives a message
 Bot.on('message',async Message => {
+
     if(!Bot.owner || !Bot.ready)return;
-    //Checking if the Message was sent By a Bot
+
     if(Message.author.bot)return;
+
     if((Bot.UnderMaintenence || Bot.inDevelopment) && Message.author.id != Bot.owner.id)return;
 
+    
+    
     let server = Message.channel.type == "dm" ? new Server() : await DataBase.read({id: Message.guild.id});
     if (!server) {
         server = new Server(Message.guild); 
         DataBase.write(server);
     }
-    //makes sure that the bot is mentioned
     if(Message.isMentioned(Bot.user) || Message.channel.type === "dm"){
-        //checks if the message was sent By the Dev 
-        if(!Bot.owner){
-            Bot.owner = await Bot.fetchApplication().owner;
-        }
+        if (!(Message.channel.type == "dm" || Message.channel.permissionsFor(Message.guild.me).has(["SEND_MESSAGES", "ADD_REACTIONS", "EMBED_LINKS"])))return Message.author.send("I need the SendMessage, AddReaction and Embed Link permission to be able to use this command. please contact a server owner");
         let avaliableCommands = Bot.commands.filter(c => checkPermissions(c.help, Message, Bot));
         for(let i in avaliableCommands){
             let cmd = avaliableCommands[i];
@@ -105,8 +104,8 @@ Bot.on('message',async Message => {
             }
         }
     }
+    if (!(Message.channel.type == "dm" || Message.channel.permissionsFor(Message.guild.me).has(["SEND_MESSAGES"])))return;
     let rules = Bot.rules.filter(v => server.settings[v.setting] == true);
-    if (Message.channel.type == "dm" || Message.channel.permissionsFor(Message.guild.me).has(["SEND_MESSAGES"]))
     for(let rule of rules){
         let results = rule.regex.exec(Message.content);
         if(results){
@@ -119,9 +118,7 @@ Bot.on('message',async Message => {
 Bot.on('guildCreate', g => {
     let server = new Server(g);
     DataBase.write(server, () => {
-        g.owner.createDM().then(o => {
-            o.send("heya im Dadbot i will do stupid shit. if you want me to stop just send **@DadBot stop**, and you want me to resume my shenanigans then use **start** instead");
-        });
+        g.owner.send("Hello there. Thanks for Inviting DadBot to your server. Use `@dadbot Toggle` to get all of the automatic replies and use `@dadbot togle [Setting]`. Other than that you will want to check out the commands with `@dadbot help`")
         Bot.SetActivity();
     });
 })
