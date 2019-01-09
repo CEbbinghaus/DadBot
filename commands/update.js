@@ -14,9 +14,7 @@ module.exports = {
         regex: /update/ig,
         run: (bot, message, settings) => {
             Child.exec("git pull", () => {
-                Child.exec("pm2 restart DadBot", () => {
-                    Confirm(message);
-                })
+                Confirm(message);
             })
         }
     }
