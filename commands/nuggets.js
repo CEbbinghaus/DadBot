@@ -1,4 +1,5 @@
 let urls = ["https://food.fnr.sndimg.com/content/dam/images/food/fullset/2013/9/12/1/FN_Picky-Eaters-Chicken-Nuggets_s4x3.jpg.rend.hgtvcom.826.620.suffix/1383770571120.jpeg"]
+const {Attachment} = require("discord.js");
 module.exports = {
   help: {
     perms: null,
@@ -12,7 +13,7 @@ module.exports = {
     weight: 500,
     regex: /chicken\s*nuggets/gi,
     run: (bot, message, settings) => {
-      message.channel.send(urls[Math.random() * urls.length | 0]);
+      message.channel.send(new Attachment(urls[Math.random() * urls.length | 0]));
     }
   }
 }
