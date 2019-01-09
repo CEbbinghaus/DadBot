@@ -11,9 +11,9 @@ module.exports = {
     },
     command: {
         weight: 500,
-        regex: /rldCMD|reload|rld/ig,
+        regex: /rld|reload|/ig,
         run: async (bot, message, settings) => {
-            await bot.shard.broadcastEval("this.LoadRules(); this.LoadCommands()")
+            await bot.shard.broadcastEval("this.LoadRules(); this.LoadCommands(); this.SetActivity();")
             Confirm(message);
         }
     }
