@@ -118,7 +118,7 @@ Bot.on('message',async Message => {
 Bot.on('guildCreate', g => {
     let server = new Server(g);
     DataBase.write(server, () => {
-        g.owner.send("Hello there. Thanks for Inviting DadBot to your server. Use `@dadbot Toggle` to get all of the automatic replies and use `@dadbot togle [Setting]`. Other than that you will want to check out the commands with `@dadbot help`")
+        g.owner.send("Hello there. Thanks for Inviting DadBot to your server. Use `@dadbot Toggle` to get all of the automatic replies and use `@dadbot toggle [Setting]`. Other than that you will want to check out the commands with `@dadbot help`")
         Bot.SetActivity();
     });
 })
