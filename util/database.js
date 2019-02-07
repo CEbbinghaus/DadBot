@@ -247,7 +247,7 @@ class CachedDataBase extends DataBase {
         this.LastPass = Date.now();
         setTimeout(this.CollectGarbage.bind(this), 6e4 * 30);
     }
-    modifyShema(object, c){
+    modifySchema(object, c){
         return this._runCommand(c, async c => {
             let oldObj = await this.read({});
             let Change = getChanges(oldObj, object)

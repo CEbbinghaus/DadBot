@@ -66,7 +66,7 @@ Bot.on('ready', async () =>{
     if(!Bot.inDevelopment)dbl.postStats(Bot.guilds.size, Bot.shard.id, Bot.shard.count)
         .then(() => console.log("Published Stats to DBL"));
     Bot.SetActivity()
-    await Bot.DataBase.modifyShema(new Server());
+    await Bot.DataBase.modifySchema(new Server());
     Bot.ready = true;
 })
 Bot.on('message',async Message => {
