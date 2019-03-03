@@ -2,8 +2,8 @@ module.exports = {
   name: "Profanities",
   desk: "Tells People that they shouldnt say bad words",
   setting: "PROFANITY",
-  regex: /[^!@#$%^&*]*(cunt|faggot|asshole|shit|dick|fuck)[^!@#$%^&*]*/gi,
+  regex: /[^!@#$%^&*]*(asshole|cunt|dick|faggot|fuck|shit)[^!@#$%^&*]*/gi,
   execute: function (Bot, message, match) {
-    message.channel.send(`Watch your Language`);
+    message.channel.send(`Watch your language`);
   }
 }

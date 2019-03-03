@@ -1,5 +1,6 @@
 # DadBot
 [![Discord Bots](https://discordbots.org/api/widget/397646331415494694.svg)](https://discordbots.org/bot/397646331415494694)
+
 **Author:** *CEbbinghaus*
 
 ## Setup:
@@ -11,6 +12,8 @@ Done
 
 ## Commands
 **The Bot does not function like normal bots and does not use a prefix. instead it uses a regex which means to activate any command you need to mention the bot.**
+
+**Example: `@dadbot help`**
 * **catch** - makes the bot play Catch with you
 * **dab** - Makes Dad do a Dab
 * **daddy** - calls dad daddy ;)
