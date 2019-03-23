@@ -11,9 +11,11 @@ module.exports = {
     },
     command: {
         weight: 500,
-        regex: /rld|reload|/ig,
+        regex: /(rld|reload)/ig,
         run: async (bot, message, settings) => {
-            await bot.shard.broadcastEval("this.LoadRules(); this.LoadCommands(); this.SetActivity();")
+            let reac = await message.react("🔄");
+            await bot.shard.broadcastEval("this.LoadRules(); this.LoadCommands(); this.SetActivity();");
+            await reac.remove();
             Confirm(message);
         }
     }

@@ -44,7 +44,10 @@ module.exports = {
                 reply.addField(`**${category}**`, commandMap[category].join("\n"));
             }
             reply.addField("Invites", `If you need any Additional Assistance join my owners Bot server: https://discord.gg/KBrxfzq.
-            If you want to Invite me you can use this Link: https://goo.gl/gq4t6z`)
+            If you want to Invite me you can use this Link: https://goo.gl/gq4t6z
+            
+            **If you would like to Help out you could Improve the Code: https://github.com/CEbbinghaus/DadBot
+            Or Help me pay for the Server by donating to my Patreon https://www.patreon.com/CEbbinghaus**`)
             message.author.send(reply);
             Confirm(message);
             return
