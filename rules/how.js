@@ -1,5 +1,7 @@
 const fetch = require("snekfetch");
 const {JSDOM, ResourceLoader} = require("jsdom");
+
+
 module.exports = {
   name: "how do i",
   desk: "Gives you a Wikihow Article helping you out immensly",
@@ -10,6 +12,6 @@ module.exports = {
     let body = new JSDOM(query.text).window.document.body
     let results = Array.from(body.querySelector("#searchresults_list").children).map(v => v.href).filter(v => v ? true : false);
     if(results.length)
-    message.channel.send(`Here. i found something that might help you: http:${results[0]}`);
+    message.channel.send(`Here. i found something that might help you: ${results[0]}`);
   }
 }
