@@ -72,11 +72,11 @@ Bot.on('ready', async () =>{
 Bot.on('message',async Message => {
 
     if(!Bot.owner || !Bot.ready)return;
-
+    
     if(Message.author.bot)return;
-
+    
     if((Bot.UnderMaintenence || Bot.inDevelopment) && Message.author.id != Bot.owner.id)return;
-
+    
     
     
     let server = Message.channel.type == "dm" ? new Server() : await DataBase.read({id: Message.guild.id});
@@ -87,13 +87,20 @@ Bot.on('message',async Message => {
     if(Message.isMentioned(Bot.user) || Message.channel.type === "dm"){
         if (!(Message.channel.type == "dm" || Message.channel.permissionsFor(Message.guild.me).has(["SEND_MESSAGES", "ADD_REACTIONS", "EMBED_LINKS"])))return Message.author.send("I need the SendMessage, AddReaction and Embed Link permission to be able to use this command. please contact a server owner");
         let avaliableCommands = Bot.commands.filter(c => checkPermissions(c.help, Message, Bot));
-        for(let i in avaliableCommands){
-            let cmd = avaliableCommands[i];
-            if(cmd.command.regex != null){
-                if(cmd.command.regex.test(Message)){
-                    try{
-                        let e = cmd.command.run(Bot, Message, server)
-                        if(e instanceof Promise)e.catch(err => {
+            console.log(Message.content)
+            for(let i in avaliableCommands){
+                let cmd = avaliableCommands[i];
+                if(cmd.command.regex != null){
+                    console.log(cmd.command.regex);
+                    if(cmd.command.regex.exec(Message.content)){
+                        cmd.command.regex.lastIndex = 0;
+                        try{
+                            let e = cmd.command.run(Bot, Message, server)
+                            if(e instanceof Promise)e.catch(err => {
+                                helpReact(Message, err.toString());
+                            })
+                            return;
+                        }catch(err){
                             helpReact(Message, err.toString());
                         })
                         return;
@@ -103,7 +110,9 @@ Bot.on('message',async Message => {
                 }
             }
         }
+        handleCommand.bind(this, avaliableCommands);
     }
+
     if (!(Message.channel.type == "dm" || Message.channel.permissionsFor(Message.guild.me).has(["SEND_MESSAGES"])))return;
     let rules = Bot.rules.filter(v => server.settings[v.setting] == true);
     for(let rule of rules){

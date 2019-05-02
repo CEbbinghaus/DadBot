@@ -11,7 +11,7 @@ module.exports = {
     },
     command: {
         weight: 500,
-        regex: /restart/,
+        regex: /restart/gi,
         run: (bot, message, settings) => {
             bot.shard.broadcastEval("process.exit()");
         }
