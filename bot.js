@@ -87,30 +87,25 @@ Bot.on('message',async Message => {
     if(Message.isMentioned(Bot.user) || Message.channel.type === "dm"){
         if (!(Message.channel.type == "dm" || Message.channel.permissionsFor(Message.guild.me).has(["SEND_MESSAGES", "ADD_REACTIONS", "EMBED_LINKS"])))return Message.author.send("I need the SendMessage, AddReaction and Embed Link permission to be able to use this command. please contact a server owner");
         let avaliableCommands = Bot.commands.filter(c => checkPermissions(c.help, Message, Bot));
-            console.log(Message.content)
-            for(let i in avaliableCommands){
-                let cmd = avaliableCommands[i];
-                if(cmd.command.regex != null){
-                    console.log(cmd.command.regex);
-                    if(cmd.command.regex.exec(Message.content)){
-                        cmd.command.regex.lastIndex = 0;
-                        try{
-                            let e = cmd.command.run(Bot, Message, server)
-                            if(e instanceof Promise)e.catch(err => {
-                                helpReact(Message, err.toString());
-                            })
-                            return;
-                        }catch(err){
+        for(let i in avaliableCommands){
+            let cmd = avaliableCommands[i];
+            if(cmd.command.regex != null){
+                if(cmd.command.regex.exec(Message.content)){
+                    cmd.command.regex.lastIndex = 0;
+                    try{
+                        let e = cmd.command.run(Bot, Message, server)
+                        if(e instanceof Promise)
+                        e.catch(err => {
                             helpReact(Message, err.toString());
-                        })
+                        });
                         return;
                     }catch(err){
                         helpReact(Message, err.toString());
                     }
+                    return;
                 }
             }
         }
-        handleCommand.bind(this, avaliableCommands);
     }
 
     if (!(Message.channel.type == "dm" || Message.channel.permissionsFor(Message.guild.me).has(["SEND_MESSAGES"])))return;
