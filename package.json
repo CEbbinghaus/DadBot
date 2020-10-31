@@ -2,7 +2,7 @@
   "name": "dadbot",
   "version": "0.0.1",
   "description": "A bot to replace you'r long lost dad",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "start": "pm2 start index.js --name='DadBot' --watch"
   },
@@ -10,9 +10,12 @@
   "license": "ISC",
   "dependencies": {
     "dblapi.js": "^2.3.0",
-    "discord.js": "^11.3.0",
-    "jsdom": "^13.1.0",
-    "mongodb": "^3.1.10",
-    "snekfetch": "^4.0.4"
+    "discord.js": "^12.0.0",
+    "mongodb": "^3.6.2",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.7",
+    "@types/mongodb": "^3.5.32"
   }
 }

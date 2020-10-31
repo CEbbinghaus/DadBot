@@ -1,6 +1,6 @@
-/settings.json
-/servers.json
+settings.json
+servers.json
 node_modules/*
-/test.js
 /package-lock.json
 .DS_Store
+build
