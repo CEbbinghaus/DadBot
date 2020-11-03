@@ -1,5 +1,7 @@
 import Child from "child_process"
 import {Confirm, Deny} from "../util/interractions"
+import { command } from "../definitions";
+
 export default {
     help: {
         perms: null,
@@ -16,4 +18,4 @@ export default {
             bot.shard.broadcastEval("process.exit()");
         }
     }
-}
+} as command;

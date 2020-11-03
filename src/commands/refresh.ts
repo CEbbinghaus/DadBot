@@ -4,6 +4,8 @@ import {clearLogs} from "../util/utilities"
 import {Client} from "discord.js"
 import util from "util"
 
+import { command } from "../definitions";
+
 export default {
   help: {
     perms: null,
@@ -26,4 +28,4 @@ export default {
     //   })
     }
   }
-}
+} as command;

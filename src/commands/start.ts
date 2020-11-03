@@ -1,3 +1,5 @@
+import { command } from "../definitions";
+
 export default {
   help: {
     perms: ["ADMINISTRATOR"],
@@ -14,4 +16,4 @@ export default {
       message.reply("This Command is Deprechiated. Please use the toggle command instead. use the help command to find out more");
     }
   }
-}
+} as command;

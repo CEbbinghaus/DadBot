@@ -2,6 +2,8 @@ import {Confirm} from "../util/interractions"
 import {checkPermissions} from "../util/utilities"
 import {MessageEmbed} from "discord.js"
 import fs from "fs"
+import { command } from "../definitions";
+
 export default {
     help: {
         perms: null,
@@ -17,7 +19,7 @@ export default {
         run: (bot, message, settings) => {
             let reply = new MessageEmbed()
             .setTitle("DadBot Repository")
-            .setAuthor("DadBot", bot.user.avatarURL)
+            .setAuthor("DadBot", bot.user.avatarURL())
             .setColor("#34363C")
             .setURL("https://github.com/CEbbinghaus/DadBot")
             .addField("Help:", `**General:**
@@ -53,4 +55,4 @@ export default {
             return
         }
     }
-}
+} as command;

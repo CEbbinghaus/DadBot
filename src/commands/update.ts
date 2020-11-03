@@ -1,5 +1,7 @@
 import Child from "child_process"
 import {Constants, Confirm, Deny} from "../util/interractions"
+import { command } from "../definitions";
+
 export default {
     help: {
         perms: null,
@@ -18,4 +20,4 @@ export default {
             })
         }
     }
-}
+} as command;

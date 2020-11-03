@@ -2,6 +2,8 @@ const replies = [
     "I'm proud of you son :)",
     "You are a disappointment to your Mother and I"
 ]
+import { command } from "../definitions";
+
 export default {
     help: {
         perms: null,
@@ -18,4 +20,4 @@ export default {
             return message.reply(replies[Math.random() * replies.length | 0]);
         }
     }
-}
+} as command;

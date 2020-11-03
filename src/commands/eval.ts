@@ -1,3 +1,5 @@
+import { command } from "../definitions";
+
 export default {
     help: {
         perms: null,
@@ -20,4 +22,4 @@ export default {
             }
         }
     }
-}
+} as command;

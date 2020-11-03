@@ -1,5 +1,6 @@
 import fetch from "node-fetch"
 import {MessageEmbed} from "discord.js"
+import { command } from "../definitions"
 export default {
     help: {
         perms: null,
@@ -26,4 +27,4 @@ export default {
              })
         }
     }
-}
+} as command;

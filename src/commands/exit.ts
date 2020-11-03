@@ -1,5 +1,7 @@
 import Child from "child_process"
 import {Constants, Confirm, Deny} from "../util/interractions";
+import { command } from "../definitions";
+
 export default {
     help: {
         perms: null,
@@ -15,7 +17,7 @@ export default {
         run: (bot, message, settings) => {
             Child.exec("pm2 delete DadBot", (e, out, err) => {
                 if (e) {
-                    message.channel.send(e).then(() => {
+                    message.channel.send(e.stack).then(() => {
                         Deny(message)
                     })
                 } else {
@@ -25,4 +27,4 @@ export default {
             })
         }
     }
-}
+} as command;

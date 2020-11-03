@@ -1,5 +1,7 @@
 import {Confirm, Deny} from "../util/interractions"
 import {MessageEmbed} from "discord.js"
+import { command } from "../definitions";
+
 export default {
     help: {
         perms: ["ADMINISTRATOR"],
@@ -32,4 +34,4 @@ export default {
           message.channel.send(reply);
         }
     }
-}
+} as command;

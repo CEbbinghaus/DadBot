@@ -4,10 +4,13 @@
 **Author:** *CEbbinghaus*
 
 ## Setup:
-- You will need [Node.js](https://nodejs.org/en/).
+- You will need [Node.js](https://nodejs.org/en/) V12 or higher and [Typescript](https://www.npmjs.com/package/typescript).
 - simply download the code with either `git pull` or by downloading the zip file and extracting the contents.
 - open a command prompt or terminal in the bot folder and use `npm i` to install all the nessecary packages.
-- to start the bot use `node index.js` or `node .`.
+- copy the *RENAME THIS TO settings.json* into the `./src/` directory and rename it to `settings.json`
+- edit the Settings to include your bot token and MongoDB login Details
+- run `tsc` to compile the source. check the output for any errors and if so try fixing them yourself or contact me on discord
+- to start the bot use `node .`.
 Done
 
 ## Commands

@@ -1,5 +1,7 @@
 import fs from "fs"
 import Settings from "../settings.json"
+import { command } from "../definitions";
+
 export default {
   help: {
     perms: null,
@@ -22,4 +24,4 @@ export default {
       });
     }
   }
-}
+} as command;

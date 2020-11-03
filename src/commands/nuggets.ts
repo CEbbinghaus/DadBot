@@ -1,4 +1,6 @@
 let urls = ["https://food.fnr.sndimg.com/content/dam/images/food/fullset/2013/9/12/1/FN_Picky-Eaters-Chicken-Nuggets_s4x3.jpg.rend.hgtvcom.826.620.suffix/1383770571120.jpeg"]
+import { command } from "../definitions";
+
 export default {
   help: {
     perms: null,
@@ -15,4 +17,4 @@ export default {
       message.channel.send(urls[Math.random() * urls.length | 0]);
     }
   }
-}
+} as command;

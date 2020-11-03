@@ -1,3 +1,5 @@
+import { command } from "../definitions";
+
 const awnsers = ["yes", "no", "maybe", "probably", "unlikely"];
 export default {
     help: {
@@ -15,5 +17,5 @@ export default {
             return message.reply(awnsers[Math.random() * awnsers.length | 0]);
         }
     }
-}
+} as command;
     

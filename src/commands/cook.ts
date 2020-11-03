@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { command } from "../definitions";
 let regx = /(cook|make\s*me)\s*(.+)/gi;
 export default {
 	help: {
@@ -39,4 +40,4 @@ export default {
 			// });
 		},
 	},
-};
+} as command;

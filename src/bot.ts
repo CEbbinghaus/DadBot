@@ -8,7 +8,7 @@ import DBLAPI from "dblapi.js";
 import * as fs from "fs";
 import { Server } from "./util/classes";
 
-const dbl = new DBLAPI(Settings.DBLToken);
+const dbl = Settings.DBLToken && new DBLAPI(Settings.DBLToken);
 // const {Client} = require("discord.js");
 // const {helpReact} = require("./util/interractions")
 // const {checkPermissions} = require("./util/utilities");
@@ -19,7 +19,7 @@ const dbl = new DBLAPI(Settings.DBLToken);
 // const dbl = new (require('dblapi.js'))(Settings.DBLToken);
 // var fs = require('fs');
 
-class Bot extends Client {
+export class Bot extends Client {
 	inDevelopment: boolean = Settings.DEV;
 	commands: any[];
 	rules: any[];
@@ -67,7 +67,7 @@ class Bot extends Client {
 		}
 	}
 
-	async SetMaintenence(m, b) {
+	async SetMaintenence(m, b = null) {
 		this.UnderMaintenence = m;
 		if (b) return;
 		await this.shard.broadcastEval(
@@ -78,7 +78,7 @@ class Bot extends Client {
 	}
 
 	async GetTotalServers() {
-		return (await this.shard.broadcastEval("this.guilds.size")).reduce(
+		return (await this.shard.broadcastEval("this.guilds.cache.size")).reduce(
 			(prev, val) => prev + val,
 			0
 		);
@@ -120,7 +120,7 @@ class Bot extends Client {
 				this.guilds.cache.size
 			} servers for a total of ${this.GetUsers()} members`
 		);
-		if (!this.inDevelopment)
+		if (dbl && !this.inDevelopment)
 			dbl.postStats(
 				this.guilds.cache.size,
 				this.shard.ids[0],

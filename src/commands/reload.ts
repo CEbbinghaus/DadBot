@@ -1,5 +1,7 @@
 import {Confirm} from "../util/interractions"
 import fs from "fs"
+import { command } from "../definitions";
+
 export default {
     help: {
         perms: null,
@@ -19,4 +21,4 @@ export default {
             Confirm(message);
         }
     }
-}
+} as command;

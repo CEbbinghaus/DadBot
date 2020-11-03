@@ -1,3 +1,5 @@
+import { command } from "../definitions";
+
 export default {
     help: {
         perms: null,
@@ -14,4 +16,4 @@ export default {
             return message.reply("Ur sister a Mister!");
         }
     }
-}
+} as command;

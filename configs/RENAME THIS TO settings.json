@@ -1,7 +1,9 @@
 {
     "maintenence": false,
-    "token": "Bot Token",
-    "DBLToken": "DBL Token",
+	"token": "Bot Token",
+	
+	"DBLToken": "DBL Token",
+	
     "Host": "Host e.g localhost",
     "Username": "Mongo Username",
     "Password": "Mongo Password"

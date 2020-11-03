@@ -6,14 +6,7 @@
 		"removeComments": true,
 		"allowUnreachableCode": true,
 		"esModuleInterop": true,
-		"sourceMap": true,
-		"types": [
-			"node"
-		],
-		"lib": [
-			"dom",
-			"es7"
-		],
+		"types": ["node"],
 		"moduleResolution": "node",
 		"target": "es6",
 		"allowJs": true,
