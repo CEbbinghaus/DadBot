@@ -46,7 +46,7 @@ export class Bot extends Client {
 	GetUsers() {
 		return this.guilds.cache
 			.map((g) => g.memberCount)
-			.reduce((a, b) => a + b);
+			.reduce((a, b) => a + b, 0);
 	}
 
 	async GetTotalUsers() {
