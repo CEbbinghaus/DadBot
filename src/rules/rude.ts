@@ -1,4 +1,4 @@
-import rule from "./hi";
+import { rule } from "../definitions";
 
 export default {
 	default: false,
