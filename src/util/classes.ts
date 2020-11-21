@@ -10,17 +10,20 @@ export class Server{
 	/**
 	 * @type {{string: boolean}}
 	 */
-	settings: object;
+	settings: object = {};
 
 	constructor(original: Server | Guild = {} as Server){
 		this.id = original.id || null;
 		this.name = original.name || null;
-		fs.readdirSync("./rules");
-		for(let i in Rules){
-			let rule = Rules[i];
-			if(!rule || !rule.setting)return;
-			//@ts-ignore
-			this.settings[rule.setting] = original.settings ? original.settings[rule.setting] : true;
-		}
+		//@ts-ignore
+		this.settings = original.settings || {};
+
+		if(Object.keys(this.settings).length == 0)
+			for(let i in Rules){
+				let rule = Rules[i];
+				if(!rule || !rule.setting)continue;
+				//@ts-ignore
+				this.settings[rule.setting] = true;
+			}
 	}
 }

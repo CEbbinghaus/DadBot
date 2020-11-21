@@ -6,6 +6,7 @@ type category = "Fun" | "Admin" | "Utility" | "Server"
 
 export interface rule{
 	name: string;
+	default: boolean;
 	desk: string;
 	setting: string;
 	regex: RegExp;

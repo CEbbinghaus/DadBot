@@ -114,12 +114,14 @@ export class Bot extends Client {
 		});
 		this.LoadCommands();
 		this.LoadRules();
+
 		//Logging amount of servers and members
 		console.log(
 			`${this.user.username}: Started Shard ${this.shard.ids[0]} on ${
 				this.guilds.cache.size
 			} servers for a total of ${this.GetUsers()} members`
 		);
+		
 		if (dbl && !this.inDevelopment)
 			dbl.postStats(
 				this.guilds.cache.size,
@@ -198,7 +200,7 @@ export class Bot extends Client {
 		)
 			return;
 		let rules = this.rules.filter(
-			(v) => server.settings[v.setting] == true
+			(v) => server.settings && server.settings[v.setting] == true
 		);
 		for (let rule of rules) {
 			let results = rule.regex.exec(message.content);
