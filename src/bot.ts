@@ -46,7 +46,7 @@ export class Bot extends Client {
 	GetUsers() {
 		return this.guilds.cache
 			.map((g) => g.memberCount)
-			.reduce((a, b) => a + b);
+			.reduce((a, b) => a + b, 0);
 	}
 
 	async GetTotalUsers() {
@@ -215,7 +215,8 @@ export class Bot extends Client {
 	GuildCreate(g) {
 		let server = new Server(g);
 		this.DataBase.write(server, () => {
-			g.owner.send(
+			// TODO: Figure out why it is nullable
+			g.owner?.send(
 				"Hello there. Thanks for Inviting DadBot to your server. Use `@dadbot Toggle` to get all of the automatic replies and use `@dadbot toggle [Setting]`. Other than that you will want to check out the commands with `@dadbot help`"
 			);
 			this.SetActivity();
