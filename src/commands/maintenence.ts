@@ -1,5 +1,5 @@
 import fs from "fs"
-import Settings from "../settings.json"
+import Settings from "../configs/settings.json"
 import { command } from "../definitions";
 
 export default {

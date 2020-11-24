@@ -17,6 +17,7 @@ export default {
         run: (bot, message, settings) => {
           let msg = message.content.toLowerCase();
           let DataBase = bot.DataBase;
+
           for (let rule of bot.rules){
             if(msg.search(new RegExp(rule.setting, "gi")) != -1){
               settings.settings[rule.setting] = !settings.settings[rule.setting];
@@ -24,6 +25,7 @@ export default {
               return message.channel.send(`Toggled ${rule.setting} to ${settings.settings[rule.setting]}`);
             }
           }
+          
           let reply = new MessageEmbed()
             .setTitle("Bot Settings:")
             .setColor("#DFF3E1");

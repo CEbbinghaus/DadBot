@@ -1,5 +1,5 @@
 import { ShardingManager } from "discord.js";
-import * as Settings from "./settings.json";
+import * as Settings from "./configs/settings.json";
 
 process.chdir(__dirname);
 

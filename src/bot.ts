@@ -3,12 +3,14 @@ import { helpReact } from "./util/interractions";
 import { checkPermissions } from "./util/utilities";
 import { CachedDataBase } from "./util/database";
 // import {Server} from "./util/classes"
-import * as Settings from "./settings.json";
+import * as Settings from "./configs/settings.json";
 import DBLAPI from "dblapi.js";
 import * as fs from "fs";
 import { Server } from "./util/classes";
 
+//@ts-ignore
 const dbl = Settings.DBLToken && new DBLAPI(Settings.DBLToken);
+
 // const {Client} = require("discord.js");
 // const {helpReact} = require("./util/interractions")
 // const {checkPermissions} = require("./util/utilities");
@@ -20,6 +22,7 @@ const dbl = Settings.DBLToken && new DBLAPI(Settings.DBLToken);
 // var fs = require('fs');
 
 export class Bot extends Client {
+	//@ts-ignore
 	inDevelopment: boolean = Settings.DEV;
 	commands: any[];
 	rules: any[];
@@ -99,13 +102,13 @@ export class Bot extends Client {
 
 	LoadRules() {
 		this.rules = fs.readdirSync("./rules/")
-		.filter((v) => !v.endsWith(".js.map"))
-		.map((v) => {
-			delete require.cache[require.resolve("./rules/" + v)];
-			const rule = require("./rules/" + v).default;
-			return rule;
-		})
-		.filter(v => !!v);
+			.filter((v) => !v.endsWith(".js.map"))
+			.map((v) => {
+				delete require.cache[require.resolve("./rules/" + v)];
+				const rule = require("./rules/" + v).default;
+				return rule;
+			})
+			.filter(v => !!v);
 	}
 
 	Ready() {
@@ -117,11 +120,10 @@ export class Bot extends Client {
 
 		//Logging amount of servers and members
 		console.log(
-			`${this.user.username}: Started Shard ${this.shard.ids[0]} on ${
-				this.guilds.cache.size
+			`${this.user.username}: Started Shard ${this.shard.ids[0]} on ${this.guilds.cache.size
 			} servers for a total of ${this.GetUsers()} members`
 		);
-		
+
 		if (dbl && !this.inDevelopment)
 			dbl.postStats(
 				this.guilds.cache.size,
@@ -145,14 +147,16 @@ export class Bot extends Client {
 		)
 			return;
 
-		let server =
+		let server: Server =
 			message.channel.type == "dm"
 				? new Server()
-				: await this.DataBase.read({ id: message.guild.id });
-		if (!server) {
+				: await this.DataBase.read({ id: message.guild.id }) as Server;
+
+		if (!server || !server.settings) {
 			server = new Server(message.guild);
 			this.DataBase.write(server);
 		}
+
 		if (message.mentions.has(this.user) || message.channel.type === "dm") {
 			if (
 				!(
@@ -190,18 +194,17 @@ export class Bot extends Client {
 			}
 		}
 
-		if (
-			!(
-				message.channel.type == "dm" ||
+		if (!(message.channel.type == "dm" ||
 				message.channel
 					.permissionsFor(message.guild.me)
-					.has(["SEND_MESSAGES"])
-			)
+					.has(["SEND_MESSAGES"]))
 		)
 			return;
+
 		let rules = this.rules.filter(
-			(v) => server.settings && server.settings[v.setting] == true
+			(v) => server.settings && server.settings[v.setting]
 		);
+		
 		for (let rule of rules) {
 			let results = rule.regex.exec(message.content);
 			rule.regex.lastIndex = 0;
